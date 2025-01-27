@@ -1,0 +1,55 @@
+images {
+  image: "/images/ball_1.png"
+}
+images {
+  image: "/images/ball_2.png"
+}
+images {
+  image: "/images/ball_3.png"
+}
+images {
+  image: "/images/ball_4.png"
+}
+images {
+  image: "/images/ball_5.png"
+}
+images {
+  image: "/images/ball_6.png"
+}
+images {
+  image: "/images/ball_7.png"
+}
+images {
+  image: "/images/ball_8.png"
+}
+images {
+  image: "/images/ball_9.png"
+}
+images {
+  image: "/images/ball_10.png"
+}
+images {
+  image: "/images/ball_11.png"
+}
+images {
+  image: "/images/line.png"
+}
+images {
+  image: "/images/bag.png"
+}
+images {
+  image: "/images/bag_line.png"
+}
+images {
+  image: "/images/smoke.png"
+}
+images {
+  image: "/images/bg_1080x2160.png"
+}
+images {
+  image: "/images/panel.png"
+}
+images {
+  image: "/images/replay.png"
+}
+extrude_borders: 2

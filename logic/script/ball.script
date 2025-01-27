@@ -1,0 +1,32 @@
+
+go.property("ball_number", 1)
+go.property("is_dynamic", true)
+
+-- hashes
+local hash_ball = hash("ball")
+local hash_collision_response = hash("collision_response")
+local hash_fall = hash("fall")
+
+function on_message(self, message_id, message, sender)
+	if message.other_group == hash_ball and message_id == hash_collision_response then
+		msg.post("/merge_manager", "collision_detected", {
+			id = self.id,
+			other_id = message.other_id,
+			ball_number = self.ball_number,
+			own_position = go.get_position(),
+			other_position = message.other_position,
+		})
+	elseif message_id == hash_fall then
+		msg.post("#collisionobject", "enable")
+	end
+end
+
+function init(self)
+	self.id = go.get_id()
+	if self.is_dynamic then
+		msg.post("#collisionobject", "enable")
+	else
+		msg.post("#collisionobject", "disable")
+		msg.post("/dropper", "sprite_size", {sprite_size = go.get("#sprite", "size").x})
+	end
+end

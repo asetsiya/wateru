@@ -1,0 +1,52 @@
+
+local balls = require("logic.module.balls")
+
+local checklist = {}
+local last_ball_number = 0
+
+-- hashes
+local hash_collision_detected = hash("collision_detected")
+
+local function update_score(ball_number)
+	label.set_text("/score#label", label.get_text("/score#label") + (2^(ball_number-1)))
+end
+
+local function collision_detected(self, ball_number, position)
+	go.delete(checklist.id)
+	balls.remove_ball(checklist.id)
+	go.delete(checklist.other_id)
+	balls.remove_ball(checklist.other_id)
+	local next_ball_number = ball_number + 1
+	if next_ball_number >= 12 then return end -- if next ball is 12, no need to create new ball.
+	local new_ball = factory.create("/ball_factories#ball_"..next_ball_number, position, nil, {is_dynamic = true}, 1.25)
+	balls.add_ball(new_ball)
+	go.animate(new_ball, "scale", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_OUTBACK, 0.35, 0, nil)
+	local smoke = "/particlefx#"..next_ball_number
+	go.set_position(go.get_position(new_ball), smoke)
+	particlefx.play(smoke)
+	update_score(ball_number)
+end
+
+local function midpoint(p1, p2)
+	return (p1 + p2) / 2
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash_collision_detected then
+		if checklist.id == message.other_id and checklist.other_id == message.id and message.ball_number == last_ball_number then
+			collision_detected(self, last_ball_number, midpoint(message.own_position, message.other_position))
+			checklist = {}
+			last_ball_number = 0
+		else
+			checklist.id = message.id
+			checklist.other_id = message.other_id
+			last_ball_number = message.ball_number
+		end
+	else
+		print("something wrong")
+	end
+
+end
+
+function init(self)
+end

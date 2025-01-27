@@ -1,0 +1,177 @@
+{
+  :bundle {
+    :android {
+      :architecture {
+        :arm64-android true
+        :armv7-android false
+      }
+      :format "apk"
+      :install true
+      :key-pass ""
+      :keystore ""
+      :keystore-pass ""
+      :launch true
+    }
+    :build-report false
+    :contentless false
+    :debug-symbols false
+    :html5 {
+      :architecture {
+        :js-web false
+        :wasm-web true
+      }
+    }
+    :liveupdate false
+    :macos {
+      :architecture {
+        :arm64-macos true
+        :x86_64-macos true
+      }
+    }
+    :output-directory "/home/dux/Documents/defold_exports"
+    :texture-compression "enabled"
+    :variant "release"
+    :windows {
+      :platform "x86_64-win32"
+    }
+  }
+  :run {
+    :simulate-rotated-device false
+    :simulated-resolution {
+      :height 740
+      :width 360
+    }
+  }
+  :workflow {
+    :recent-files [
+      [
+        "/go/ball_11.go"
+        :scene
+      ]
+      [
+        "/go/ball_10.go"
+        :scene
+      ]
+      [
+        "/go/ball_9.go"
+        :scene
+      ]
+      [
+        "/go/ball_2.go"
+        :scene
+      ]
+      [
+        "/go/ball_4.go"
+        :scene
+      ]
+      [
+        "/go/ball_5.go"
+        :scene
+      ]
+      [
+        "/go/ball_6.go"
+        :scene
+      ]
+      [
+        "/go/ball_7.go"
+        :scene
+      ]
+      [
+        "/go/ball_8.go"
+        :scene
+      ]
+      [
+        "/pop.particlefx"
+        :scene
+      ]
+      [
+        "/smoke.atlas"
+        :scene
+      ]
+      [
+        "/smoke1.particlefx"
+        :scene
+      ]
+      [
+        "/go/ball_1.go"
+        :scene
+      ]
+      [
+        "/go/ball_3.go"
+        :scene
+      ]
+      [
+        "/smoke1_copy.particlefx"
+        :scene
+      ]
+      [
+        "/mouldycheese.font"
+        :scene
+      ]
+      [
+        "/mouldycheese_copy.font"
+        :scene
+      ]
+      [
+        "/smoke.particlefx"
+        :scene
+      ]
+      [
+        "/particlefx/4.particlefx"
+        :scene
+      ]
+      [
+        "/particlefx/3.particlefx"
+        :scene
+      ]
+      [
+        "/particlefx/2.particlefx"
+        :scene
+      ]
+      [
+        "/particlefx/5.particlefx"
+        :scene
+      ]
+      [
+        "/particlefx/6.particlefx"
+        :scene
+      ]
+      [
+        "/particlefx/7.particlefx"
+        :scene
+      ]
+      [
+        "/particlefx/8.particlefx"
+        :scene
+      ]
+      [
+        "/particlefx/9.particlefx"
+        :scene
+      ]
+      [
+        "/particlefx/10.particlefx"
+        :scene
+      ]
+      [
+        "/particlefx/11.particlefx"
+        :scene
+      ]
+      [
+        "/main/main.collection"
+        :scene
+      ]
+      [
+        "/game.project"
+        :cljfx-form-view
+      ]
+      [
+        "/main/main.atlas"
+        :scene
+      ]
+      [
+        "/main/main.gui"
+        :scene
+      ]
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+
+local reg = require("logic.module.reg")
+
+local hash_collision_response = hash("collision_response")
+local hash_ball = hash("ball")
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash_collision_response and message.other_group == hash_ball then
+		if reg.check("gameover") == false and reg.check("panel_avaliable") then
+
+			reg.set("gameover", true)
+			msg.post("gui", "gameover")
+			msg.post("dropper", "gameover")
+
+		end
+	end
+end
+
+function init(self)
+	 
+end

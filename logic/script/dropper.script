@@ -1,0 +1,151 @@
+
+local reg = require("logic.module.reg")
+local balls = require("logic.module.balls")
+
+-- hashes
+local hash_touch = hash("touch")
+local hash_sprite_size = hash("sprite_size")
+local hash_gameover = hash("gameover")
+local hash_replay = hash("replay")
+
+local function set_random_seed()
+	local a = os.time()
+	local b = string.sub(a, -1)
+	local c = tostring(os.date("%S"))
+	local d = (tonumber(b)+1) * (tonumber(c)+1) -- "+1" because "0" is dangerous
+	local e = d * d + 17
+	local f = string.reverse(tostring(e))
+	math.randomseed(tonumber(f))
+	math.random()
+	math.random()
+	math.random()
+	math.random()
+	math.random()
+	local aa = math.random(17, 937)
+	math.random()
+	math.random()
+	math.random()
+	math.random()
+	local ab = math.random(23, 873)
+	local g =  tostring(ab)..tostring(aa)
+	local h = tonumber(g) * ab
+	math.randomseed(h)
+	math.random()
+	math.random()
+	math.random()
+	math.random()
+	math.random()
+end
+
+local function set_ball(self)
+	if self.cooldown then return end -- if in cooldown, skip.
+	if reg.check("gameover") then return end -- if in gameover, skip.
+	self.cooldown = true
+	timer.delay(0.3, false, function ()
+		self.current_ball = math.random(1, 5)
+		--self.current_ball = 10
+		if reg.check("gameover") then return end -- if in gameover, skip.
+		self.ball = factory.create("/ball_factories#ball_"..self.current_ball, go.get_position(), nil, {is_dynamic = false}, vmath.vector3(0.5, 0.5, 0.5))
+		msg.post(self.ball, "set_parent", { parent_id = self.id, keep_world_transform = 1 })
+		if self.pressed == true then
+			msg.post("#sprite", "enable")
+		end
+		go.animate(self.ball, "scale", go.PLAYBACK_ONCE_FORWARD, vmath.vector3(1, 1, 1), go.EASING_OUTBACK, 0.3, 0, function ()
+		self.cooldown = false
+		end)
+	end)
+end
+
+local function update_score(self)
+	local score = label.get_text("/score#label") + (2^(self.current_ball-1))
+	label.set_text("/score#label", score)
+	reg.set("score", score)
+end
+
+local function drop(self)
+	if self.cooldown then return end -- if in cooldown, skip.
+	if reg.check("gameover") then return end -- if in gameover, skip.
+	msg.post(self.ball, "set_parent", { keep_world_transform = 1 })
+	msg.post(self.ball, "fall")
+	balls.add_ball(self.ball)
+	update_score(self)
+	set_ball(self)
+	reg.set("panel_avaliable", true)
+end
+
+local function game_over(self)
+	go.delete(self.ball)
+	go.set("score#label", "color", vmath.vector4(1, 1, 1, 0))
+	go.set("score#label", "outline", vmath.vector4(1, 1, 1, 0))
+end
+
+local function replay(self)
+	self.cooldown = false
+	go.set("score#label", "color", vmath.vector4(1, 1, 1, 1))
+	go.set("score#label", "outline", vmath.vector4(0, 0, 0, 1))
+	--go.delete(balls.get(), true)
+	for index, value in ipairs(balls.get()) do
+		if go.exists(value) then
+			go.delete(value)
+		else
+			print(index)
+		end
+		
+	end
+	balls.reset()
+	reg.set("gameover", false)
+	label.set_text("/score#label", 0)
+	set_ball(self)
+end
+
+function on_input(self, action_id, action)
+	if  action_id == hash_touch then
+		if action.pressed == true then
+			self.pressed = true
+			if self.cooldown == false and reg.check("gameover") == false then
+				msg.post("#sprite", "enable")
+			end
+		elseif action.released == true then
+				self.pressed = false
+				msg.post("#sprite", "disable")
+				drop(self)
+		end
+	elseif action.x and action.y then
+		if self.cooldown == false and self.pressed == true and reg.check("gameover") == false then
+			msg.post("#sprite", "enable")
+		end
+        local pos = go.get_position()
+---@diagnostic disable-next-line: param-type-mismatch
+		pos = vmath.vector3(vmath.clamp(action.x, self.clamp1, self.clamp2), pos.y, pos.z)
+        go.set_position(pos)
+    end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash_sprite_size then
+		self.clamp1 = 13 + (message.sprite_size / 2)
+		self.clamp2 = 704 - (message.sprite_size / 2)
+	elseif message_id == hash_gameover then
+		if go.exists(self.ball) then
+			game_over(self)
+		end
+	elseif message_id == hash_replay then
+		replay(self)
+	end
+end
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	msg.post("#sprite", "disable")
+
+	self.clamp1 = 0
+	self.clamp2 = 720
+	self.ball_scale = 0
+	self.current_ball = 1
+	self.cooldown = false
+	self.id = go.get_id()
+	self.pressed = false
+
+	set_random_seed()
+	set_ball(self)
+end

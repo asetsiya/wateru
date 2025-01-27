@@ -1,0 +1,34 @@
+[bootstrap]
+main_collection = /main/main.collectionc
+render = /orthographic/render/orthographic.renderc
+
+[script]
+shared_state = 1
+
+[display]
+width = 720
+height = 1440
+high_dpi = 1
+
+[android]
+input_method = HiddenInputField
+package = com.asetsiya.wateru
+immersive_mode = 1
+
+[html5]
+scale_mode = stretch
+
+[project]
+title = wateru
+version = 1.0
+developer = asetsiya
+publisher = asetsiya
+dependencies#0 = https://github.com/britzl/defold-orthographic/archive/master.zip
+
+[physics]
+gravity_y = -2200.0
+scale = 0.01
+debug_alpha = 0.3
+max_collisions = 128
+max_collision_object_count = 256
+
