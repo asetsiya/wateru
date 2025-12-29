@@ -11,7 +11,7 @@ Built with **Defold**, targeting **Android** first but fully **cross-platform**.
 
 ## Features
 
-### Core Gameplay
+### Gameplay
 - Classic fruit-merge mechanics with improved physics (unlike the early version)
 - Next fruit preview (unlike the early version)
 - Significantly refined collision and merge logic
