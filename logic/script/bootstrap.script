@@ -1,0 +1,18 @@
+local proxy_manager = require("logic.module.proxy_manager")
+
+function on_message(self, message_id, message, sender)
+	proxy_manager.handle_message(message_id, message, sender)
+
+	if message_id == hash("load_main") then
+		proxy_manager.switch("#online", "#main")
+	elseif message_id == hash("load_online") then
+		proxy_manager.switch("#main", "#online")
+	elseif message_id == hash("switch") then
+		proxy_manager.switch(message.from, message.to)
+	end
+end
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	proxy_manager.load("#main")
+end

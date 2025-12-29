@@ -1,0 +1,42 @@
+local reg = require("logic.module.reg")
+
+-- hashes
+local hash_collision_response = hash("collision_response")
+local hash_ball = hash("ball")
+local hash_gameover = hash("gameover")
+
+-- keys
+local key_3 = hash("key_3")
+
+local function gameover()
+	reg.set("gameover", true)
+	sound.play("sounds#gameover")
+	sound.stop("sounds#music")
+	msg.post("gui", "gameover")
+	msg.post("dropper", "gameover")
+	msg.post("state_manager", "gameover")
+end
+
+function on_message(self, message_id, message, sender)
+	if (message_id == hash_collision_response and
+			message.other_group == hash_ball and
+			reg.check("gameover") == false and
+			reg.check("gameover_panel_avaliable")) then
+		-- if gameover:
+		gameover()
+	elseif message_id == hash_gameover then
+		-- if gameover signal recieved
+		gameover()
+	end
+end
+
+-- manuel gameover trigger system (not for android)
+function on_input(self, action_id, action)
+	if action_id == key_3 and action.pressed and not (sys.get_sys_info().system_name == "aasAndroid") then
+		gameover()
+	end
+end
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+end

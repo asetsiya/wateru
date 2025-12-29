@@ -1,0 +1,22 @@
+name: "bootstrap"
+scale_along_z: 0
+embedded_instances {
+  id: "go"
+  data: "components {\n"
+  "  id: \"bootstrap\"\n"
+  "  component: \"/logic/script/bootstrap.script\"\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"main\"\n"
+  "  type: \"collectionproxy\"\n"
+  "  data: \"collection: \\\"/main/main.collection\\\"\\n"
+  "\"\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"online\"\n"
+  "  type: \"collectionproxy\"\n"
+  "  data: \"collection: \\\"/main/online.collection\\\"\\n"
+  "\"\n"
+  "}\n"
+  ""
+}

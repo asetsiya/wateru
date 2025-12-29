@@ -1,0 +1,29 @@
+
+local camera = require("orthographic.camera")
+
+local hash_clicked = hash("clicked")
+
+local function screen2world(action)
+	if not action.x then return action end -- if no mouse input, skip.
+	local screen_pos = vmath.vector3(action.x, action.y, 0)
+	local world_pos = camera.screen_to_world(nil, screen_pos)
+	local new_action = action
+	new_action.x = world_pos.x
+	new_action.y = world_pos.y
+	return new_action
+end
+
+function on_message(self, message_id, message, sender)
+
+end
+
+function on_input(self, action_id, action)
+	if action.x then
+		msg.post("#cursor", "input", {action_id = action_id, action = screen2world(action)})
+	end
+
+end
+
+function init(self)
+	msg.post("#", "acquire_input_focus")
+end

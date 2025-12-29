@@ -1,0 +1,37 @@
+local reg = require("logic.module.reg")
+local saver = require("logic.module.saver")
+
+-- hashes
+local hash_boom = hash("boom")
+
+local function timer(type)
+    local timer_tricks = saver.load().timer_tricks or 0
+    saver.save("timer_tricks", timer_tricks + 1)
+end
+
+local function buy(price)
+    if saver.load().score >= price then
+        saver.save("score", saver.load().score - price)
+        msg.post("gui", "something_purchased")
+        return true
+    else
+        msg.post("gui", "toast_message", {message = "Not enough points.", seconds = 2})
+        return false
+    end
+end
+
+local function boom()
+    if buy(saver.load().price_boom) then
+        timer("boom")
+        print("boom_init")
+        reg.set("tricks_boom", true)
+        reg.set("dropper_active", false)
+        msg.post("gui", "toast_message", {message = "Touch a ball", seconds = 2})
+    end
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash_boom then
+        boom()
+    end
+end

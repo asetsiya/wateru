@@ -1,0 +1,8 @@
+local saver = require("logic.module.saver")
+
+-- music and sfx, load settings from save file and apply on init.
+
+function init(self)
+    sound.set_group_gain("sfx", saver.load().sfx and 1 or 0)
+    sound.set_group_gain("music", saver.load().music and 1 or 0)
+end

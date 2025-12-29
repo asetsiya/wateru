@@ -1,0 +1,59 @@
+[bootstrap]
+main_collection = /main/bootstrap.collectionc
+render = /orthographic/render/orthographic.renderc
+
+[script]
+shared_state = 1
+
+[display]
+width = 720
+height = 1440
+high_dpi = 1
+
+[android]
+input_method = HiddenInputField
+package = com.asetsiya.wateru
+immersive_mode = 1
+
+[html5]
+scale_mode = stretch
+
+[project]
+title = Wateru
+version = 1.11
+developer = asetsiya
+dependencies#0 = https://github.com/britzl/defold-orthographic/archive/refs/tags/3.4.1.zip
+dependencies#1 = https://github.com/subsoap/vibrate/archive/master.zip
+dependencies#2 = https://github.com/britzl/defold-input/archive/refs/tags/4.7.0.zip
+dependencies#3 = https://github.com/Insality/druid/archive/refs/tags/1.1.0.zip
+dependencies#4 = https://github.com/Insality/defold-event/archive/refs/tags/12.zip
+dependencies#5 = https://github.com/Melsoft-Games/defold-md5/archive/master.zip
+
+[physics]
+gravity_y = -2200.0
+scale = 0.01
+max_collisions = 512
+max_collision_object_count = 512
+max_contacts = 512
+max_fixed_timesteps = 1
+velocity_threshold = 500.0
+
+[particle_fx]
+max_count = 128
+max_emitter_count = 128
+
+[render]
+clear_color_red = 1.0
+clear_color_green = 0.9
+clear_color_blue = 0.7
+
+[graphics]
+opengl_version_hint = 46
+
+[input]
+game_binding = /input/all.input_bindingc
+gamepads = /builtins/input/default.gamepadsc
+
+[engine]
+fixed_update_frequency = 30
+

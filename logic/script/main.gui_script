@@ -1,0 +1,725 @@
+
+local druid = require("druid.druid")
+
+local reg = require("logic.module.reg")
+local saver = require("logic.module.saver")
+local network = require("logic.module.network")
+local dev = require("logic.module.dev")
+local prices = require("logic.module.prices")
+
+-- hashes
+local hash_gameover = hash("gameover")
+local hash_score = hash("score")
+local hash_text = hash("text")
+local hash_key_backspace = hash("key_backspace")
+local hash_login_success = hash("login_success")
+local hash_update_found = hash("update_found")
+local hash_something_purchased = hash("something_purchased")
+local hash_toast_message = hash("toast_message")
+
+local panel_pos1 = vmath.vector3(-640, 749, 0)
+local panel_pos2 = vmath.vector3(360, 749, 0)
+local panel_pos3 = vmath.vector3(1360, 749, 0)
+
+local vibration_value_0 = 0
+local vibration_value_1 = 10
+local vibration_value_2 = 40
+
+-- colors
+local score_color = vmath.vector4(0.99199998378754, 0.95700001716614, 0.83499997854233, 1)
+local score_outline = vmath.vector4(0.54900002479553, 0.37299999594688, 0.29800000786781, 1)
+local highscore_color = vmath.vector4(1, 0.81599998474121, 0.391999989748, 1)
+local highscore_outline = vmath.vector4(0.85900002717972, 0.36100000143051, 0.43099999427795, 1)
+
+local crown_pos = vmath.vector3(360, 1413, 0)
+local highscore_pos = vmath.vector3(360, 1368, 0)
+
+local function highscore_spectacle(self)
+    gui.animate(self.node_score, "color", highscore_color, gui.EASING_LINEAR, 0.3, 0, nil, gui.PLAYBACK_ONCE_FORWARD)
+    gui.animate(self.node_score, "outline", highscore_outline, gui.EASING_LINEAR, 0.3, 0, nil, gui.PLAYBACK_ONCE_FORWARD)
+    gui.animate(self.node_highscore, "color", score_color, gui.EASING_LINEAR, 0.3, 0, nil, gui.PLAYBACK_ONCE_FORWARD)
+    gui.animate(self.node_highscore, "outline", score_outline, gui.EASING_LINEAR, 0.3, 0, nil, gui.PLAYBACK_ONCE_FORWARD)
+
+    gui.animate(self.node_crown, "position", highscore_pos, gui.EASING_LINEAR, 0.3, 0, nil, gui.PLAYBACK_ONCE_FORWARD)
+    gui.animate(self.node_highscore, "position", crown_pos, gui.EASING_LINEAR, 0.3, 0, nil, gui.PLAYBACK_ONCE_FORWARD)
+
+    gui.animate(self.node_crown, "scale", 1, gui.EASING_LINEAR, 0.3, 0, nil, gui.PLAYBACK_ONCE_FORWARD)
+end
+
+local function check_highscore(self, score)
+    if self.is_highscore_detected then return end -- if already detected, skip.
+    local highscore = saver.load().highscore or 0
+    if score > highscore then
+        highscore_spectacle(self)
+        self.is_highscore_detected = true
+    end
+end
+
+local function gameover_panel(self)
+    if self.is_highscore_detected then saver.save("highscore", saver.load().score) end -- if highscore is detected, highscore is score.
+    saver.save("score", 0)
+    gui.set_enabled(self.node_ingame_score_root, false)
+    gui.set_text(self.node_score, 0)
+    gui.set_position(self.node_gameover_panel, panel_pos1)
+    gui.set_enabled(self.node_gameover_panel, true)
+    gui.set_text(self.node_ui_score, reg.check("score"))
+    gui.set_text(self.node_ui_highscore, (saver.load().highscore or 0))
+    gui.animate(self.node_gameover_panel, "position", panel_pos2, gui.EASING_INOUTQUAD, 0.3, 0, nil,
+        gui.PLAYBACK_ONCE_FORWARD)
+    network.update()
+end
+
+local function panel_off(self, panel, callback)
+    if reg.check("panel_avaliable") or not panel then return end
+    if reg.check("current_panel") ~= panel then return end
+    if panel == self.node_request_panel then self.online_in_request = false end -- for the manage online_requests.
+    gui.animate(panel, "position", panel_pos3, gui.EASING_INOUTQUAD, 0.3, 0, function()
+        reg.set("panel_avaliable", true)
+        if callback then callback() end
+    end, gui.PLAYBACK_ONCE_FORWARD)
+end
+
+local function panel_on(self, panel, callback)
+    if not panel then return end
+    if not reg.check("panel_avaliable") then
+        panel_off(self, reg.check("current_panel"))
+    end
+    reg.set("panel_avaliable", false)
+    reg.set("current_panel", panel)
+    gui.set_position(panel, panel_pos1)
+    gui.set_enabled(panel, true)
+    gui.animate(panel, "position", panel_pos2, gui.EASING_INOUTQUAD, 0.3, 0, callback or nil, gui.PLAYBACK_ONCE_FORWARD)
+end
+
+local function colors_and_positions_reset(self)
+    gui.set_color(self.node_score, score_color)
+    gui.set_color(self.node_highscore, highscore_color)
+    gui.set_outline(self.node_score, score_outline)
+    gui.set_outline(self.node_highscore, highscore_outline)
+
+    gui.set_position(self.node_crown, crown_pos)
+    gui.set_position(self.node_highscore, highscore_pos)
+
+    gui.set_scale(self.node_crown, vmath.vector3(0.6, 0.6, 1))
+end
+
+local function reset(self)
+    msg.post("dropper", "replay")
+    msg.post("state_manager", "replay")
+    gui.set_enabled(self.node_ui_score, true)
+    gui.set_enabled(self.node_gameover_panel, false)
+    reg.set("gameover", false)
+    sound.play("sounds#music")
+    gui.set_enabled(self.node_ingame_score_root, true)
+    gui.set_text(self.node_highscore, saver.load().highscore or 0)
+    gui.set_text(self.node_score, 0)
+    colors_and_positions_reset(self)
+    self.is_highscore_detected = false
+end
+
+local function replay(self)
+    if self.is_animating then return end
+    self.is_animating = true
+    gui.animate(self.node_gameover_panel, "position", panel_pos3, gui.EASING_INOUTQUAD, 0.3, 0, function()
+        -- reset commands in here
+        self.is_animating = false
+        reset(self)
+    end, gui.PLAYBACK_ONCE_FORWARD)
+end
+
+local function sfx_button(self)
+    -- sfx settings change and save
+    saver.save("sfx", not saver.load().sfx)
+    if saver.load().sfx then gui.set_enabled(self.node_d_sfx, false) else gui.set_enabled(self.node_d_sfx, true) end
+    sound.set_group_gain("sfx", saver.load().sfx and 1 or 0)
+end
+
+local function music_button(self)
+    -- music settings change and save
+    saver.save("music", not saver.load().music)
+    if saver.load().music then gui.set_enabled(self.node_d_music, false) else gui.set_enabled(self.node_d_music, true) end
+    sound.set_group_gain("music", saver.load().music and 1 or 0)
+end
+
+local function set_vibration_ui(self)
+    local d1 -- disable
+    local d2 -- disable
+    local ee -- enable
+    if saver.load().vibration == vibration_value_0 then
+        ee = self.node_d_vibration0
+        d1 = self.node_d_vibration1
+        d2 = self.node_d_vibration2
+    elseif saver.load().vibration == vibration_value_1 then
+        ee = self.node_d_vibration1
+        d1 = self.node_d_vibration0
+        d2 = self.node_d_vibration2
+    elseif saver.load().vibration == vibration_value_2 then
+        ee = self.node_d_vibration2
+        d1 = self.node_d_vibration0
+        d2 = self.node_d_vibration1
+    else -- if no data, set vibration2
+        ee = self.node_d_vibration1
+        d1 = self.node_d_vibration0
+        d2 = self.node_d_vibration2
+    end
+    gui.set_enabled(ee, false)
+    gui.set_enabled(d1, true)
+    gui.set_enabled(d2, true)
+end
+
+local function update_score(self, score)
+    gui.set_text(self.node_score, score) -- update score text
+    saver.save("score", score)
+    check_highscore(self, score)
+    msg.post("/state_manager", "update") -- hey, state_manager! please update the state.
+end
+
+local function password_controlled_text_writer(self) -- if the text is password
+    local function standart_thing(self)
+        local place_holder = string.rep("*", string.len(self.message))
+        gui.set_text(self.picked_input, place_holder)
+    end
+    if self.picked_input == self.node_register_panel_password_1 then
+        self.password_1 = self.message
+        standart_thing(self)
+    elseif self.picked_input == self.node_register_panel_password_2 then
+        self.password_2 = self.message
+        standart_thing(self)
+    elseif self.picked_input == self.node_login_panel_password then
+        self.password = self.message
+        standart_thing(self)
+    else -- if it is not password
+        gui.set_text(self.picked_input, self.message)
+    end
+end
+
+local function register(self)
+    local username = gui.get_text(self.node_register_panel_username)
+    local email = gui.get_text(self.node_register_panel_email)
+    if not (self.password_1 == self.password_2) then
+        print("passwords do not match"); return
+    end
+    if string.len(username) < 8 then
+        network.register(username, email, self.password_1)
+    end
+end
+
+local function login(self)
+    local email = gui.get_text(self.node_login_panel_email)
+    network.login(email, self.password)
+end
+
+local function init_login()
+    if saver.load().password and saver.load().email then
+        network.login(saver.load().email, saver.load().password)
+    else
+        msg.post("/time", "write_fugitive")
+    end
+end
+
+local function handle_scoreboard(self)
+    local score_data = saver.load().score_data
+    if not score_data[1] then return end -- classic control thing
+
+    local self_index
+
+    for index, value in ipairs(score_data) do
+        local text = (value.rank or 11) .. ". " .. (value.username or "noname") .. " " .. (value.highscore or 0)
+        local node = self["node_score_panel_score_" .. index]
+        gui.set_text(node, text)
+        if saver.load().user_id == value.user_id then
+            gui.set_position(self.node_red_line, gui.get_position(node) + vmath.vector3(155, 0, 0))
+            self_index = index
+        end
+        if index >= 10 then break end
+    end
+
+    if not self_index then
+        gui.set_position(self.node_red_line, vmath.vector3(0, -9999, 0))
+    end
+
+    for i = 1, 4, 1 do
+        if score_data[i] then
+            gui.set_text(self["node_boardscore_text" .. i], score_data[i].username or "")
+        end
+    end
+end
+
+local function toast_message(self, message, seconds)
+    if self.toast_message_showing then return end
+    self.toast_message_showing = true
+    local pos = gui.get_position(self.node_screen_notification_text)
+    local to = vmath.vector3(pos.x + 20, pos.y, pos.z)
+    gui.animate(self.node_screen_notification_text, gui.PROP_POSITION, to, gui.EASING_LINEAR, 0.15, 0, nil, gui.PLAYBACK_LOOP_PINGPONG)
+    timer.delay(0.4, false, function ()
+        gui.cancel_animation(self.node_screen_notification_text, gui.PROP_POSITION)
+    end)
+    gui.set_text(self.node_screen_notification_text, message)
+    timer.delay(seconds or 5, false, function ()
+        gui.set_position(self.node_screen_notification_text, pos)
+        gui.set_text(self.node_screen_notification_text, "")
+        self.toast_message_showing = false
+    end)
+end
+
+local function ip_exists(connections_data, ip)
+    for _, conn in ipairs(connections_data) do
+        if conn.ip == ip then return true end
+    end
+    return false
+end
+
+local function remove_item_from_connections(self, ip)
+    local pos = nil
+    
+    for index, value in ipairs(self.connections_data) do
+        if value.ip == ip then
+            pos = index
+            break
+        end
+    end
+    
+    if pos == nil then
+        print("ip not found:", ip)
+        return
+    end
+    
+    local druid_button = self.connections_druid_buttons[pos]
+    if druid_button then
+        self.druid:remove(druid_button)
+        table.remove(self.connections_druid_buttons, pos)
+    end
+    
+    table.remove(self.connections_data, pos)
+    
+    local node = self.connections_created_nodes[pos]
+    if node then
+        table.remove(self.connections_created_nodes, pos)
+        
+        local grid_index = self.connections_grid:get_index_by_node(node)
+        if grid_index then
+            self.connections_grid:remove(grid_index)
+        end
+        
+        gui.delete_node(node)
+    end
+
+    self.connections_number = self.connections_number - 1
+    gui.set_text(self.node_connections_number, self.connections_number)
+    if self.connections_number <= 0 then
+        gui.set_enabled(self.node_connections_nugget, false)
+    end
+end
+
+local function add_item_to_connections(self, name, ip)
+    local prefab_nodes = gui.clone_tree(self.node_connections_prefab)
+    local root = prefab_nodes["connections_prefab"]
+    local text = prefab_nodes["connections_name"]
+    local button = prefab_nodes["connections_join_button_panel"]
+    
+    local druid_button = self.druid:new_button(button, function ()
+        print("connect to:", ip)
+        msg.post("online_logic", "connect", {ip = ip})
+        local name = saver.load().username or "noname"
+        msg.post("online_logic", "send_message", {ip = ip, message = "wanna_battle?_" .. name, rival_name = gui.get_text(text)})
+    end)
+    
+    table.insert(self.connections_created_nodes, root)
+    table.insert(self.connections_druid_buttons, druid_button)
+    table.insert(self.connections_data, {name = name, ip = ip})
+    
+    gui.set_text(text, name)
+    gui.set_enabled(root, true)
+    self.connections_grid:add(root)
+
+    self.connections_number = self.connections_number + 1
+    gui.set_enabled(self.node_connections_nugget, true)
+    gui.set_text(self.node_connections_number, self.connections_number)
+end
+
+local function handle_new_ip(self, message)
+
+    if tonumber(string.sub(message.message, 1, 5)) == tonumber(reg.check("online_uid")) then return end -- if the connection coming from me, skip.
+    --msg.post("gui", "toast_message", {message = string.sub(message.message, 1, 5), reg.check("online_uid")})
+
+    print("new connection on gui!")
+    
+    if ip_exists(self.connections_data, message.ip) then
+        -- ip exists, reset the timer.
+        if self.connection_timers and self.connection_timers[message.ip] then
+            timer.cancel(self.connection_timers[message.ip])
+        end
+    else
+        -- new ip. add to list.
+        add_item_to_connections(self, string.sub(message.message, 6), message.ip)
+        
+        -- create ip table
+        if not self.connection_timers then
+            self.connection_timers = {}
+        end
+    end
+    
+    -- create timer on any state
+    if not self.connection_timers then
+        self.connection_timers = {}
+    end
+    
+    self.connection_timers[message.ip] = timer.delay(2, false, function()
+        remove_item_from_connections(self, message.ip)
+        self.connection_timers[message.ip] = nil
+    end)
+end
+
+local function got_battle_request(self, name, ip)
+    for _, value in ipairs(self.online_ip_blacklist) do if ip == value then return end end -- if the ip in the blacklist, skip.
+    if self.online_in_request then return end -- if in_the_request_panel, skip.
+    self.online_in_request = true
+    gui.set_text(self.node_battle_panel_name, name)
+    self.battle_request_ip = ip
+    panel_on(self, self.node_request_panel)
+end
+
+local function flash_bang(self, duration)
+    gui.animate(self.node_flash_node, "color", vmath.vector4(1, 1, 1, 1), gui.EASING_LINEAR, 0.1, 0, function()
+        gui.animate(self.node_flash_node, "color", vmath.vector4(1, 1, 1, 0), gui.EASING_LINEAR, duration, 2, function ()
+            msg.post("detector#collisionobject", "enable")
+        end)
+        msg.post("state_manager", "delete_balls")
+    end)
+end
+
+function update(self, dt)
+    self.druid:update(dt)
+end
+
+function on_input(self, action_id, action)
+    if action_id == hash("touch") and action.pressed and action.x then
+        if not reg.check("panel_avaliable") and not gui.pick_node(reg.check("current_panel"), action.x, action.y) then
+            -- clicked to anywhere except the panel
+            panel_off(self, reg.check("current_panel"))
+        elseif action_id == hash_key_backspace and action.repeated then -- text
+            local l = string.len(self.message)
+            self.message = string.sub(self.message, 0, l - 1)
+            password_controlled_text_writer(self)
+        elseif gui.pick_node(self.node_replay_button, action.x, action.y) then
+            -- clicked to replay button in the gameover panel
+            replay(self)
+        elseif gui.pick_node(self.node_settings_sfx, action.x, action.y) then
+            -- clicked to sfx button in the settings
+            sfx_button(self)
+        elseif gui.pick_node(self.node_settings_music, action.x, action.y) then
+            -- clicked to music button in the settings
+            music_button(self)
+        elseif gui.pick_node(self.node_settings_vibration0, action.x, action.y) then
+            -- clicked to vibration0 button in the settings
+            saver.save("vibration", vibration_value_0)
+            set_vibration_ui(self)
+            dev.code("1")
+        elseif gui.pick_node(self.node_settings_vibration1, action.x, action.y) then
+            -- clicked to vibration1 button in the settings
+            saver.save("vibration", vibration_value_1)
+            set_vibration_ui(self)
+            dev.code("2")
+        elseif gui.pick_node(self.node_settings_vibration2, action.x, action.y) then
+            -- clicked to vibration2 button in the settings
+            saver.save("vibration", vibration_value_2)
+            set_vibration_ui(self)
+            dev.code("3")
+        elseif gui.pick_node(self.node_register_panel_login, action.x, action.y) then
+            panel_off(self, self.node_register_panel, function()
+                panel_on(self, self.node_login_panel)
+            end)
+        elseif gui.pick_node(self.node_login_panel_register, action.x, action.y) then
+            panel_off(self, self.node_login_panel, function()
+                panel_on(self, self.node_register_panel)
+            end)
+        elseif gui.pick_node(self.node_register_button, action.x, action.y) then
+            register(self)
+        elseif gui.pick_node(self.node_login_button, action.x, action.y) then
+            login(self)
+        elseif gui.pick_node(self.node_help_button, action.x, action.y) then
+            sys.open_url("https://www.google.com/search?q=life+is+tough")
+        elseif gui.pick_node(self.node_update_button, action.x, action.y) then
+            sys.open_url(reg.check("url"))
+        elseif gui.pick_node(self.node_tricks_boom_button, action.x, action.y) then
+            panel_off(self, self.node_tricks_panel, function ()
+                msg.post("tricks", "boom")
+            end)
+        else -- text input detection field -- text
+            for _, value in ipairs(self.text_nodes) do
+                if gui.pick_node(value, action.x, action.y) then
+                    self.picked_input = value
+                    self.message = ""
+                    -- detect text area and open keyboard
+                    if self.picked_input == self.node_register_panel_password_1 or self.picked_input == self.node_register_panel_password_2 or self.picked_input == self.node_login_panel_password then -- if text area is a password area
+                        gui.show_keyboard(gui.KEYBOARD_TYPE_PASSWORD, false)
+                    elseif self.picked_input == self.node_register_panel_email or self.picked_input == self.node_login_panel_email then
+                        gui.show_keyboard(gui.KEYBOARD_TYPE_EMAIL, false)
+                    else
+                        gui.show_keyboard(gui.KEYBOARD_TYPE_DEFAULT, false)
+                    end
+                    break
+                else -- clicked no text area
+                    self.picked_input = nil
+                    self.message = ""
+                    gui.hide_keyboard()
+                end
+            end
+        end
+    elseif action_id == hash_text and self.picked_input then                                                   -- text
+        if not (self.picked_input == self.node_register_panel_username) or (7 > string.len(self.message)) then -- if picked input is username, must be lesser then 7 char. if it is not username, infinity vuuuhu
+            self.message = self.message .. action.text
+            password_controlled_text_writer(self)
+        end
+    end
+    return self.druid:on_input(action_id, action)
+end
+
+local hash_updated = hash("updated")
+local hash_update_highscore = hash("update_highscore")
+local hash_change_text = hash("change_text")
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash_gameover and reg.check("gameover_panel_avaliable") then
+        reg.set("gameover_panel_avaliable", false)
+        gameover_panel(self)
+    elseif message_id == hash_score then
+        update_score(self, message.score)
+    elseif message_id == hash_login_success then
+        print("login success")
+        
+        -- close the panels
+        panel_off(self, self.node_login_panel)
+        panel_off(self, self.node_register_panel)
+
+        gui.set_text(self.node_boardscore_text3, "")
+    elseif message_id == hash_updated then
+        handle_scoreboard(self)
+    elseif message_id == hash_update_found then
+        gui.set_text(self.node_old_version, "Installed: v" .. reg.check("current_version"))
+        gui.set_text(self.node_new_version, "New: v" .. reg.check("latest_version"))
+        panel_on(self, self.node_update_panel)
+    elseif message_id == hash_something_purchased then
+        update_score(self, saver.load().score)
+    elseif message_id == hash_toast_message then
+        toast_message(self, message.message, message.seconds)
+    elseif message_id == hash_update_highscore then
+        gui.set_text(self.node_highscore, saver.load().highscore)
+    elseif message_id == hash_change_text then
+        --pprint(message)
+        gui.set_text(self[message.node], message.text)
+    elseif message_id == hash("connection") then
+        handle_new_ip(self, message)
+    elseif message_id == hash("battle_request") then
+        got_battle_request(self, message.name, message.ip)
+    elseif message_id == hash("flash_bang") then
+		flash_bang(self, message.duration)
+	end
+    self.druid:on_message(message_id, message, sender)
+end
+
+function final(self)
+    self.druid:final()
+end
+
+function init(self)
+    msg.post(".", "acquire_input_focus")
+
+    -- genius node define method
+    self.template_nodes = {
+        "scoreboard_root",
+        "register_panel",
+        "login_panel",
+        "register_panel_login",
+        "login_panel",
+        "register_button",
+        "login_button",
+        "login_panel_register",
+        "boardscore_text1",
+        "boardscore_text2",
+        "boardscore_text3",
+        "boardscore_text4",
+        "score_panel_score_1",
+        "score_panel_score_2",
+        "score_panel_score_3",
+        "score_panel_score_4",
+        "score_panel_score_5",
+        "score_panel_score_6",
+        "score_panel_score_7",
+        "score_panel_score_8",
+        "score_panel_score_9",
+        "score_panel_score_10",
+        "score_panel",
+        "red_line",
+        "version",
+        "update_panel",
+        "update_button",
+        "new_version",
+        "old_version",
+        "tricks_boom_button",
+        "tricks_panel",
+        "tricks_button",
+        "screen_notification_text",
+        "price_boom",
+        "help_button",
+        "connections_panel",
+        "request_panel",
+        "battle_panel_name",
+        "connections_nugget",
+        "connections_number",
+
+    }
+    for _, value in ipairs(self.template_nodes) do
+        self["node_" .. value] = gui.get_node(value)
+    end
+
+    -- another genius node define method
+    self.template_text_nodes = {
+        "register_panel_username",
+        "register_panel_email",
+        "register_panel_password_1",
+        "register_panel_password_2",
+        "login_panel_email",
+        "login_panel_password",
+
+    }
+    self.text_nodes = {}
+    for _, value in ipairs(self.template_text_nodes) do
+        self["node_" .. value] = gui.get_node(value)
+        table.insert(self.text_nodes, self["node_" .. value])
+    end
+
+    -- nodes
+    self.node_ui_score = gui.get_node("ui_score")
+    self.node_ui_highscore = gui.get_node("ui_highscore")
+    self.node_gameover_panel = gui.get_node("gameover_panel")
+    self.node_replay_button = gui.get_node("replay_button")
+    self.node_settings_button = gui.get_node("settings_button")
+    self.node_settings_panel = gui.get_node("settings_panel")
+    self.node_settings_sfx = gui.get_node("settings_sfx")
+    self.node_settings_music = gui.get_node("settings_music")
+    self.node_settings_vibration0 = gui.get_node("settings_vibration0")
+    self.node_settings_vibration1 = gui.get_node("settings_vibration1")
+    self.node_settings_vibration2 = gui.get_node("settings_vibration2")
+    self.node_d_sfx = gui.get_node("d_sfx")
+    self.node_d_music = gui.get_node("d_music")
+    self.node_d_vibration0 = gui.get_node("d_vibration0")
+    self.node_d_vibration1 = gui.get_node("d_vibration1")
+    self.node_d_vibration2 = gui.get_node("d_vibration2")
+    self.node_score = gui.get_node("score")
+    self.node_highscore = gui.get_node("highscore")
+    self.node_ingame_score_root = gui.get_node("ingame_score_root")
+    self.node_crown = gui.get_node("crown")
+
+    self.is_animating = false
+    self.is_highscore_detected = false
+    self.message = ""
+    self.password = ""
+    self.password_1 = ""
+    self.password_2 = ""
+
+    self.connections_number = 0
+
+    reg.set("panel_avaliable", true)
+    reg.set("gameover_panel_avaliable", true)
+    gui.set_enabled(self.node_ui_score, true)
+    gui.set_enabled(self.node_gameover_panel, false)
+    reg.set("gameover", false)
+
+    if saver.load().sfx == nil then saver.save("sfx", true) end
+    if saver.load().sfx then gui.set_enabled(self.node_d_sfx, false) else gui.set_enabled(self.node_d_sfx, true) end
+    if saver.load().music then gui.set_enabled(self.node_d_music, false) else gui.set_enabled(self.node_d_music, true) end
+    set_vibration_ui(self)
+
+    gui.set_text(self.node_highscore, saver.load().highscore or 0)
+
+    colors_and_positions_reset(self)
+
+    saver.save("version", gui.get_text(self.node_version))
+
+    init_login()
+
+    if not saver.load().password then
+        gui.set_text(self.node_boardscore_text3, "Register")
+    end
+
+    prices.update()
+
+    self.node_flash_node = gui.get_node("flash")
+    gui.set_position(self.node_flash_node, vmath.vector3(484, 722, 0))
+    gui.set_color(self.node_flash_node, vmath.vector4(1, 1, 1, 0))
+
+    --gui.set_enabled(self.node_connections_nugget, false)
+    gui.set_text(self.node_connections_number, 4)
+
+    self.druid = druid.new(self)
+
+    -- druid buttons
+
+    self.scoreboard_root_button = self.druid:new_button(self.node_scoreboard_root, function ()
+        if not saver.load().password then
+            panel_on(self, self.node_register_panel)
+        else
+            network.read()
+            panel_on(self, self.node_score_panel)
+        end
+    end)
+
+    self.settings_button = self.druid:new_button(self.node_settings_button, function ()
+        panel_on(self, self.node_settings_panel)
+    end)
+
+    self.tricks_button = self.druid:new_button(self.node_tricks_button, function ()
+        panel_on(self, self.node_tricks_panel)
+    end)
+
+    -- awesome druid button for open the connections_panel
+    self.connections_button = self.druid:new_button("connections_button", function ()
+        panel_on(self, self.node_connections_panel)
+        --msg.post("bootstrap:/go", "load_online")
+    end)
+
+    -- connections grid with druid --start
+
+    self.node_connections_prefab = gui.get_node("connections_prefab")
+    -- set prefab disabled
+    gui.set_enabled(self.node_connections_prefab, false)
+
+    self.connections_created_nodes = {}
+
+    self.connections_grid = self.druid:new_grid("connections_content", "connections_prefab", 1)
+    gui.set_size_mode(gui.get_node("connections_content"), gui.SIZE_MODE_MANUAL)
+    self.connections_scroll = self.druid:new_scroll("connections_view", "connections_content")
+    self.connections_scroll:bind_grid(self.connections_grid)
+
+    self.connections_data = {}
+    self.connections_druid_buttons = {}
+
+    -- for the count system stability:
+    add_item_to_connections(self, "24", "192.168.1.24")
+    remove_item_from_connections(self, "192.168.1.24")
+
+    -- connections grid with druid --end
+
+    self.request_accept_button = self.druid:new_button("request_accept", function ()
+        print("connect to:", self.battle_request_ip)
+        msg.post("online_logic", "battle", {ip = self.battle_request_ip})
+        self.battle_request_ip = nil
+        panel_off(self, self.node_request_panel)
+    end)
+
+    self.request_reject_button = self.druid:new_button("request_reject", function ()
+        table.insert(self.online_ip_blacklist, self.battle_request_ip) -- insert ip to blacklist
+        self.battle_request_ip = nil
+        panel_off(self, self.node_request_panel)
+    end)
+
+    reg.set("online_mode_choosen", false)
+
+    self.online_ip_blacklist = {}
+    self.online_in_request = false
+
+    --timer.delay(10, false, function ()
+    --    msg.post("bootstrap:/go", "load_online")
+    --end)
+end

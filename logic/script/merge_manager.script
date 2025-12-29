@@ -1,0 +1,132 @@
+
+local balls = require("logic.module.balls")
+local saver = require("logic.module.saver")
+local reg = require("logic.module.reg")
+
+-- hashes
+local hash_collision_detected = hash("collision_detected")
+
+local detected_balls = {}
+
+local delay = 3
+local duration = 4
+
+local function update_score(ball_number)
+	local score = (saver.load().score or 0) + (2^(ball_number-1))
+	reg.set("score", score)
+	msg.post("/gui", "score", {score = score})
+end
+
+local function midpoint(p1, p2)
+	return (p1 + p2) / 2
+end
+
+local function mou(new_ball)
+	local to = vmath.vector3(360, 1100, 1)
+	go.animate(new_ball, "position", go.PLAYBACK_ONCE_FORWARD, to, go.EASING_LINEAR, duration, delay, function ()
+		
+	end)
+end
+
+local function omaewa(position)
+	print("omaewa")
+	msg.post("detector#collisionobject", "disable")
+	local new_ball = factory.create("/ball_factories#ball_11f", position, nil, {is_dynamic = true}, 1.25)
+	balls.add_ball(new_ball)
+	go.animate(new_ball, "scale", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_OUTBACK, 0.35, 0, nil)
+	local smoke = "/particlefx#"..11
+	go.set_position(go.get_position(new_ball), smoke)
+	particlefx.play(smoke)
+	--sound.play("/sounds#pop")
+	if vibrate then
+		local vib = saver.load().vibration
+	end
+	--print("created:", new_ball)
+	mou(new_ball)
+end
+
+local function merge()
+	-- merge two balls and create a new ball.
+	--print("merge started")
+	local ball_number = detected_balls[1].ball_number
+	local position = midpoint(detected_balls[1].own_position, detected_balls[1].other_position)
+	go.delete(detected_balls[1].id)
+	balls.remove_ball(detected_balls[1].id)
+	--print("deleted 1 :", detected_balls[1].id)
+	go.delete(detected_balls[1].other_id)
+	balls.remove_ball(detected_balls[1].other_id)
+	--print("deleted 2 :", detected_balls[1].other_id)
+	detected_balls = {} -- clean the table
+	local next_ball_number = ball_number + 1
+	update_score(ball_number)
+	if next_ball_number >= 13 then
+		return
+	elseif next_ball_number == 12 then
+		omaewa(position)
+	elseif next_ball_number < 12 then  -- if next ball is 12, no need to create a new ball.
+		local new_ball = factory.create("/ball_factories#ball_"..next_ball_number, position, nil, {is_dynamic = true}, 1.25)
+		balls.add_ball(new_ball)
+		go.animate(new_ball, "scale", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_OUTBACK, 0.35, 0, nil)
+		local smoke = "/particlefx#"..next_ball_number
+		go.set_position(go.get_position(new_ball), smoke)
+		particlefx.play(smoke)
+		sound.play("/sounds#pop")
+		if vibrate then
+			local vib = saver.load().vibration
+			vibrate.vibrate(vib and vib or 10)
+		end
+		--print("created:", new_ball)
+	end
+end
+
+local function control()
+	if not (detected_balls[1] and detected_balls[2]) then return end -- skip code
+	
+	if detected_balls[1].ball_number == detected_balls[2].ball_number then
+		--print("number match")
+		if detected_balls[1].id == detected_balls[2].other_id and detected_balls[2].id == detected_balls[1].other_id then
+			--print("id match")
+			local one_check = false
+			local two_check = false
+			for _, value in ipairs(balls.get()) do
+				if value == detected_balls[1].id then
+					one_check = true
+				elseif value == detected_balls[2].id then
+					two_check = true
+				end
+			end
+			if one_check and two_check then
+				--print("no problem")
+				merge()
+			else
+				print("merge bug blocked")
+			end
+		end
+	end
+end
+
+local function first_detection(message)
+	if detected_balls[1] and detected_balls[2] then
+		detected_balls = {}
+		detected_balls[1] = message
+		--print("- 1 from 2")
+	elseif detected_balls[1] then
+		--print("- 2 from 1")
+		detected_balls[2] = message
+	elseif not detected_balls[1] then
+		--print("- 1 from 0")
+		detected_balls[1] = message
+	end
+	--print("B", detected_balls[1] and detected_balls[1].id or "", detected_balls[2] and detected_balls[2].id or "")
+	control()
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash_collision_detected then
+		--pprint("pprint\n", message)
+		first_detection(message)
+	else
+		print("something wrong (merge manager)")
+	end
+
+end

@@ -1,0 +1,68 @@
+
+local saver = require("logic.module.saver")
+local balls = require("logic.module.balls")
+
+-- hashes
+local hash_gameover = hash("gameover")
+local hash_replay = hash("replay")
+local hash_update = hash("update")
+
+local ball_specs = {}
+
+local function ball_save()
+    ball_specs = {}
+    for index, ball in ipairs(balls.get()) do
+        if not go.exists(ball) then return end -- if the ball is nil, skip.
+        ball_specs[index] = {
+            pos = go.get_position(ball),
+            size = go.get(msg.url(nil, ball, "ball"), "ball_number")
+        }
+    end
+    saver.save("balls", ball_specs)
+    print("saved")
+end
+
+local function score()
+    local score = saver.load().score
+    msg.post("/gui", "score", {score = score or 0})
+end
+
+local function delete_balls()
+	for index, value in ipairs(balls.get()) do
+		if go.exists(value) then
+			go.delete(value)
+		else
+			print(index)
+		end
+	end
+	balls.reset()
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash_gameover then -- if gameover, stop timer and delete balls from memory.
+        --timer.cancel(self.ball_saver_timer)
+        saver.save("balls", nil)
+    elseif message_id == hash_replay then
+        --self.ball_saver_timer = timer.delay(4, true, ball_save)
+    elseif message_id == hash_update then
+        ball_save()
+    elseif message_id == hash("delete_balls") then
+        delete_balls()
+    end
+end
+
+function final(self)
+    balls.reset()
+end
+
+function init(self)
+    score()
+    ball_specs = saver.load().balls
+    if ball_specs then
+        for _, value in ipairs(ball_specs) do
+            local new_ball = factory.create("/ball_factories#ball_"..value.size, value.pos, nil, {is_dynamic = true}, 1)
+            balls.add_ball(new_ball)
+        end
+    end
+    --self.ball_saver_timer = timer.delay(4, true, ball_save)
+end

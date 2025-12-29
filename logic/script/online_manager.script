@@ -1,0 +1,223 @@
+---@diagnostic disable: cast-local-type
+
+local reg = require("logic.module.reg")
+local online_balls = require("logic.module.online_balls")
+local online = require("logic.module.online")
+
+local server_dropper_pos = 1292
+local client_dropper_pos = 580
+
+local server_secondball_pos = 1337
+local client_secondball_pos = 630
+
+local server_score_pos = 1318
+local client_score_pos = 616
+
+local ball_details = {}
+local rival_ball_details = {}
+
+local function say_rival_to_we_lost()
+    --if reg.check("online_gameover") then return end -- if already "the game is over", skip.
+    online.send_message(reg.check("rival_ip"), "ilost", true)
+end
+
+local function say_gui_to_we_lost()
+    if reg.check("online_gameover") then return end -- if already "the game is over", skip.
+    msg.post("gui", "we_lost")
+end
+
+local function say_rival_to_we_won()
+    --if reg.check("online_gameover") then return end -- if already "the game is over", skip.
+    online.send_message(reg.check("rival_ip"), "iwon", true)
+end
+
+local function say_gui_to_we_won()
+    if reg.check("online_gameover") then return end -- if already "the game is over", skip.
+    msg.post("gui", "we_won")
+end
+
+local function say_gui_to_connection_lost()
+    if reg.check("online_gameover") then return end -- if already "the game is over", skip.
+    msg.post("gui", "connection_lost")
+    print("it's like... connection lost.")
+end
+
+local function reload_online()
+    msg.post("bootstrap:/go", "switch", {from = "#online", to = "#online"})
+    print("aaaaaaaaaaaaaccccccccc online reloading")
+end
+
+local function return_to_menu()
+    msg.post("bootstrap:/go", "load_main")
+    print("aaaaaaaaaaaaaccccccccc main loading")
+end
+
+local function setting_up(self)
+    local dropper_pos = go.get_position("dropper")
+    local rival_dropper_pos = go.get_position("rival_dropper")
+    local secondball_pos = go.get_position("second_ball_place")
+
+    if reg.check("amiserver") then -- we are server. we are on the top.
+        dropper_pos.y = server_dropper_pos
+        rival_dropper_pos.y = client_dropper_pos
+        secondball_pos.y = server_secondball_pos
+        msg.post("gui", "positions", {pos = server_score_pos, rival = client_score_pos})
+    else -- we are client. we are at the bottom.
+        dropper_pos.y = client_dropper_pos
+        rival_dropper_pos.y = server_dropper_pos
+        secondball_pos.y = client_secondball_pos
+        msg.post("gui", "positions", {pos = client_score_pos, rival = server_score_pos})
+    end
+
+    go.set_position(dropper_pos, "dropper")
+    go.set_position(rival_dropper_pos, "rival_dropper")
+    go.set_position(secondball_pos, "second_ball_place")
+end
+
+local function update_balls_to_rival(self)
+    if reg.check("online_gameover") then return end -- if gameover, skip the update.
+    for index, value in ipairs(online_balls.get()) do
+        local ball_pos = go.get_position(value)
+        local ball_number = go.get(msg.url("online", value, "ball"), "ball_number")
+        ball_details[index] = {id = value, number = ball_number, position = ball_pos}
+    end
+    online.send_message(reg.check("rival_ip"), "ball_update" .. json.encode(ball_details), false)
+
+    local dropper_pos_x = go.get_position("dropper").x
+    online.send_message(reg.check("rival_ip"), "dropper_pos"..dropper_pos_x, false)
+
+    --pprint(ball_details)
+    ball_details = {}
+end
+
+local function update_ball_state(self, rival_balls)
+
+	-- 1. Gelen tabloda olanlar
+	for _, ball in pairs(rival_balls) do
+		local remote_id = ball.id
+		local number = ball.number
+		-- position string → gerçek vmath.vector3
+		local position = assert(load("return " .. ball.position))()
+
+		if self.remote_balls[remote_id] then
+			-- zaten var → sadece pozisyon güncelle
+			go.set_position(position, self.remote_balls[remote_id])
+		else
+			-- yok → create et
+			local factory_url = string.format("/ball_factories#ball_%d", number)
+			local new_ball = factory.create(factory_url, position, nil, {is_puppet = true})
+			self.remote_balls[remote_id] = new_ball
+		end
+	end
+
+	-- 2. Eski tablodaki ama yeni tabloda olmayanları sil
+	local active_ids = {}
+	for _, ball in pairs(rival_balls) do
+		active_ids[ball.id] = true
+	end
+
+	for remote_id, local_go in pairs(self.remote_balls) do
+		if not active_ids[remote_id] then
+			go.delete(local_go)
+			self.remote_balls[remote_id] = nil
+		end
+	end
+end
+
+function update(self, dt)
+    online.update()
+end
+
+function final(self)
+    online.stop()
+    online_balls.reset()
+end
+
+function fixed_update(self, dt)
+    update_balls_to_rival(self)
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("update_score") then
+        online.send_message(reg.check("rival_ip"), "update_score" .. message.score, true)
+        if string.sub(reg.check("online_mode") or "", 1, 5) == "point" then -- if the online mode is about the point:
+            if message.score >= tonumber(string.sub(reg.check("online_mode"), 6)) then
+                say_gui_to_we_won()
+                say_rival_to_we_won()
+            end
+        end
+    elseif message_id == hash("current_ball") then
+        online.send_message(reg.check("rival_ip"), "dropper_update" .. message.number, true)
+    elseif message_id == hash("we_lost") then
+        if reg.check("online_mode") == "suicide" then
+            say_gui_to_we_won()
+            say_rival_to_we_won()
+        else
+            say_rival_to_we_lost()
+            say_gui_to_we_lost()
+        end
+    elseif message_id == hash("online_mode_choosen") then
+        print("online mode choosed now send it...")
+        online.send_message(reg.check("rival_ip"), "online_mode" .. reg.check("online_mode"), true, function ()
+            -- success_callback:
+            print("success, repeat...")
+            reload_online()
+        end, function ()
+            -- fail callback:
+            print("fail, turnback...")
+            return_to_menu()
+        end)
+    elseif message_id == hash("ball_number") then
+        if reg.check("online_mode") == "ball_8" and message.number == 8 then
+            say_gui_to_we_won()
+            say_rival_to_we_won()
+        elseif reg.check("online_mode") == "ball_9" and message.number == 9 then
+            say_gui_to_we_won()
+            say_rival_to_we_won()
+        elseif reg.check("online_mode") == "ball_10" and message.number == 10 then
+            say_gui_to_we_won()
+            say_rival_to_we_won()
+        end
+    end
+end
+
+function init(self)
+
+    --if not reg.check("online_mode_choosen") then return end -- if mode not selected, skip everything.
+
+    self.remote_balls = {}
+
+    setting_up(self)
+    
+    online.connect_to_peer(reg.check("rival_ip"))
+
+    online.start_listening(function (message, ip ,port)
+        --print(message)
+        if string.sub(message, 1, 11) == "ball_update" then
+            rival_ball_details = json.decode(string.sub(message, 12))
+            update_ball_state(self, rival_ball_details)
+            --pprint("rival_balls", rival_ball_details)
+        elseif string.sub(message, 1, 12) == "update_score" then
+            msg.post("gui", "rival_score", {score = string.sub(message, 13)})
+        elseif string.sub(message, 1, 11) == "dropper_pos" then
+            local rival_dropper_pos_x = string.sub(message, 12)
+            rival_dropper_pos = go.get_position("rival_dropper")
+            rival_dropper_pos.x = tonumber(rival_dropper_pos_x)
+            go.set_position(rival_dropper_pos, "rival_dropper")
+        elseif string.sub(message, 1, 14) == "dropper_update" then
+            sprite.play_flipbook("rival_dropper#sprite", "ball_" .. string.sub(message, 15))
+        elseif message == "ilost" then
+            say_gui_to_we_won()
+        elseif message == "iwon" then
+            say_gui_to_we_lost()
+        elseif string.sub(message, 1, 11) == "online_mode" then
+            print("reload")
+            reg.set("online_mode", string.sub(message, 12))
+            reg.set("online_mode_name", reg.check("online_modes")[string.sub(message, 12)].name)
+            reg.set("online_mode_choosen", true)
+            reload_online()
+        end
+    end, function ()
+        say_gui_to_connection_lost()
+    end)
+end

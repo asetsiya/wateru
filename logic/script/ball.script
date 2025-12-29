@@ -1,0 +1,109 @@
+local balls = require("logic.module.balls")
+local reg = require("logic.module.reg")
+
+go.property("ball_number", 1)
+go.property("is_dynamic", true)
+go.property("is_puppet", false)
+
+-- hashes
+local hash_ball = hash("ball")
+local hash_collision_response = hash("collision_response")
+local hash_fall = hash("fall")
+local hash_clicked = hash("clicked")
+
+local function close_eyes(self)
+	sprite.play_flipbook("#sprite", self.closed_sprite)
+end
+
+local function open_eyes(self)
+	sprite.play_flipbook("#sprite", self.opened_sprite)
+end
+
+local function blink(self)
+	if self.ball_number == 11 then return end
+	close_eyes(self)
+	local delay = math.random(1, 4) / 10 -- actually: 0.1, 0.4 | math.random only works with integers
+	local delay2 = math.random(3, 9)
+	timer.delay(delay, false, function ()
+		open_eyes(self)
+		timer.delay(delay2, false, blink) -- recursive
+	end)
+end
+
+local function final_decorations(self)
+	local smoke = "/particlefx#"..self.ball_number
+	go.set_position(go.get_position(), smoke)
+	go.animate(".", "scale", go.PLAYBACK_ONCE_FORWARD, 1.2, go.EASING_OUTBACK, 0.01, 0, function ()
+		particlefx.play(smoke)
+		sound.play("/sounds#pop")
+		go.animate(".", "scale", go.PLAYBACK_ONCE_FORWARD, 0, go.EASING_INCUBIC, 0.1, 0, function ()
+			reg.set("dropper_active", true) -- dropper, please go back to work.
+			go.delete()
+		end)
+	end)
+end
+
+local function destroy_itself(self, message)
+	--pprint("i am deleted. details:", message)
+	balls.remove_ball(self.id) -- delete itself from the ball list
+	msg.post("/state_manager", "update") -- hey, state_manager! please update the state.
+	final_decorations(self)
+end
+
+local function clicked_on_me(self, message)
+	if reg.check("tricks_boom") then
+		reg.set("tricks_boom", false)
+		destroy_itself(self, message)
+	end
+end
+
+local function shindeuru(self)
+	--self.ball_number = 12
+	if vibrate then
+		timer.delay(2, false, function ()
+			vibrate.vibrate(4000)
+		end)
+	end
+	sound.play("sounds#nani", nil, function ()
+		sound.play("sounds#flashbang")
+		timer.delay(1.25, false, function ()
+			msg.post("gui", "flash_bang", {duration = 4})
+		end)
+	end)
+end
+
+function on_message(self, message_id, message, sender)
+	if message.other_group == hash_ball and message_id == hash_collision_response then
+		msg.post("/merge_manager", "collision_detected", {
+			id = self.id,
+			other_id = message.other_id,
+			ball_number = self.ball_number,
+			own_position = go.get_position(),
+			other_position = message.other_position,
+		}
+	)
+	elseif message_id == hash_fall then
+		msg.post("#collisionobject", "enable")
+	elseif message_id == hash_clicked then
+		clicked_on_me(self, message)
+	end
+end
+
+function init(self)
+	self.id = go.get_id()
+	self.closed_sprite = "ball_"..self.ball_number.."c"
+	self.opened_sprite = "ball_"..self.ball_number
+	if self.is_dynamic then
+		msg.post("#collisionobject", "enable")
+	else
+		msg.post("#collisionobject", "disable")
+		msg.post("/dropper", "sprite_size", {sprite_size = go.get("#sprite", "size").x})
+	end
+	--eye blink
+	--timer.delay(math.random(3, 9), false, blink)
+
+	if go.get("#sprite", "animation") == hash("ball_11f") then
+		shindeuru(self)
+	end
+end
+

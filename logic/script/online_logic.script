@@ -1,0 +1,77 @@
+
+local online = require("logic.module.online")
+local saver = require("logic.module.saver")
+local reg = require("logic.module.reg")
+
+local amiserver
+local rival_name
+local rival_ip
+
+local function start_battle()
+
+    reg.set("rival_name", rival_name)
+    reg.set("rival_ip", rival_ip)
+    reg.set("amiserver", amiserver)
+    reg.set("username", saver.load().username or "noname")
+
+    --msg.post("gui", "toast_message", {message = "rival_ip: ".. rival_ip .. "amiserver?: ".. tostring(amiserver), seconds = 15})
+    msg.post("bootstrap:/go", "load_online") -- load online proxy
+end
+
+local function start_udp_listening()
+    online.start_listening(function(message, ip, port)
+        if string.sub(message, 1, 13) == "wanna_battle?" then
+            local name = string.sub(message, 15) or "noname"
+            msg.post("gui", "battle_request", {ip = ip, name = name})
+            amiserver = false
+            rival_name = name
+            rival_ip = ip
+        elseif message == "battle" then
+            start_battle()
+        end
+    end)
+end
+
+local function start_p2p_discovery()
+    local username = saver.load().username or "noname"
+    local online_uid = math.random(10000, 99999)
+    reg.set("online_uid", online_uid)
+    online.p2p_start("wateru_" .. online_uid .. username, "wateru_", function (ip, port, message)
+        msg.post("gui", "connection", {ip = ip, message = message})
+    end)
+end
+
+function update(self, dt)
+    online.update()
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash("connect") then
+        print("hehehehey")
+        online.connect_to_peer(message.ip)
+    elseif message_id == hash("send_message") then
+        online.send_message(message.ip, message.message, false)
+        if message.rival_name then
+            amiserver = true
+            rival_name = message.rival_name
+            rival_ip = message.ip
+        end
+    elseif message_id == hash("battle") then
+        print("battle signal sending")
+        online.connect_to_peer(message.ip)
+        online.send_message(message.ip, "battle", true, function ()
+            start_battle()
+        end)
+    end
+end
+
+function final(self)
+    online.stop()
+end
+
+function init(self)
+    label.set_text("/online_logic#ip_label", online.get_ip())
+    start_p2p_discovery()
+    start_udp_listening()
+end
+

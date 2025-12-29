@@ -1,0 +1,1893 @@
+script: "/logic/script/main.gui_script"
+fonts {
+  name: "mouldycheese"
+  font: "/mouldycheese_copy.font"
+}
+fonts {
+  name: "mouldycheese3"
+  font: "/mouldycheese3.font"
+}
+fonts {
+  name: "mouldycheese_4"
+  font: "/mouldycheese_4.font"
+}
+textures {
+  name: "main"
+  texture: "/main/main.atlas"
+}
+nodes {
+  position {
+    x: 1360.0
+    y: 749.0
+  }
+  size {
+    x: 600.0
+    y: 700.0
+  }
+  type: TYPE_BOX
+  texture: "main/panel_template"
+  id: "gameover_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 70.0
+    y: 200.0
+    z: 70.0
+    w: 80.0
+  }
+}
+nodes {
+  position {
+    y: -206.0
+  }
+  size {
+    x: 450.0
+    y: 144.0
+  }
+  type: TYPE_BOX
+  texture: "main/green_button"
+  id: "replay_button"
+  parent: "gameover_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 45.0
+    z: 40.0
+  }
+}
+nodes {
+  position {
+    y: 4.0
+  }
+  type: TYPE_BOX
+  texture: "main/green_play_icon"
+  id: "play_icon"
+  parent: "replay_button"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    y: 237.0
+  }
+  scale {
+    x: 1.1
+    y: 1.1
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "Score"
+  font: "mouldycheese"
+  id: "gameover_text"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "gameover_panel"
+  inherit_alpha: true
+  shadow_alpha: 0.0
+}
+nodes {
+  position {
+    y: -54.0
+  }
+  scale {
+    x: 2.0
+    y: 2.0
+  }
+  color {
+    x: 0.902
+    y: 0.902
+    z: 0.902
+  }
+  type: TYPE_TEXT
+  text: "3342"
+  font: "mouldycheese"
+  id: "ui_score"
+  parent: "gameover_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: 68.0
+  }
+  scale {
+    x: 0.8
+    y: 0.8
+  }
+  color {
+    y: 0.816
+    z: 0.392
+  }
+  type: TYPE_TEXT
+  text: "8754"
+  font: "mouldycheese"
+  id: "ui_highscore"
+  outline {
+    x: 0.878
+    y: 0.235
+    z: 0.325
+  }
+  parent: "gameover_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: 123.0
+  }
+  type: TYPE_BOX
+  texture: "main/crown"
+  id: "box"
+  parent: "gameover_panel"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: 37.0
+    y: 137.0
+  }
+  size {
+    x: 70.0
+    y: 70.0
+  }
+  type: TYPE_BOX
+  texture: "main/menu_button"
+  id: "settings_button"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 2028.0
+    y: 749.0
+  }
+  size {
+    x: 608.0
+    y: 570.0
+  }
+  type: TYPE_BOX
+  texture: "main/panel_template"
+  id: "settings_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 70.0
+    y: 200.0
+    z: 70.0
+    w: 80.0
+  }
+}
+nodes {
+  position {
+    x: -80.0
+    y: 6.0
+  }
+  type: TYPE_BOX
+  texture: "main/sfx_button"
+  id: "settings_sfx"
+  parent: "settings_panel"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  type: TYPE_BOX
+  texture: "main/disabled_button"
+  id: "d_sfx"
+  parent: "settings_sfx"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: 80.0
+    y: 6.0
+  }
+  type: TYPE_BOX
+  texture: "main/music_button"
+  id: "settings_music"
+  parent: "settings_panel"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  type: TYPE_BOX
+  texture: "main/disabled_button"
+  id: "d_music"
+  parent: "settings_music"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: -160.0
+    y: -154.0
+  }
+  type: TYPE_BOX
+  texture: "main/vibration_button_0"
+  id: "settings_vibration0"
+  parent: "settings_panel"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  type: TYPE_BOX
+  texture: "main/disabled_button"
+  id: "d_vibration0"
+  parent: "settings_vibration0"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    y: -154.0
+  }
+  type: TYPE_BOX
+  texture: "main/vibration_button_1"
+  id: "settings_vibration1"
+  parent: "settings_panel"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  type: TYPE_BOX
+  texture: "main/disabled_button"
+  id: "d_vibration1"
+  parent: "settings_vibration1"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: 160.0
+    y: -154.0
+  }
+  type: TYPE_BOX
+  texture: "main/vibration_button_2"
+  id: "settings_vibration2"
+  parent: "settings_panel"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  type: TYPE_BOX
+  texture: "main/disabled_button"
+  id: "d_vibration2"
+  parent: "settings_vibration2"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    y: 173.0
+  }
+  scale {
+    x: 1.2
+    y: 1.2
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "Settings"
+  font: "mouldycheese"
+  id: "settings_text"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "settings_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -261.0
+  }
+  scale {
+    x: 0.45
+    y: 0.45
+  }
+  color {
+    x: 0.816
+    y: 0.616
+    z: 0.494
+  }
+  type: TYPE_TEXT
+  text: "v1.11"
+  font: "mouldycheese"
+  id: "version"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "settings_panel"
+  inherit_alpha: true
+}
+nodes {
+  type: TYPE_BOX
+  id: "ingame_score_root"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+  visible: false
+}
+nodes {
+  position {
+    x: 360.0
+    y: 1300.0
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "0"
+  font: "mouldycheese3"
+  id: "score"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "ingame_score_root"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 360.0
+    y: 1368.0
+  }
+  scale {
+    x: 0.6
+    y: 0.6
+  }
+  color {
+    y: 0.816
+    z: 0.392
+  }
+  type: TYPE_TEXT
+  text: "0"
+  font: "mouldycheese3"
+  id: "highscore"
+  outline {
+    x: 0.878
+    y: 0.235
+    z: 0.325
+  }
+  parent: "ingame_score_root"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 360.0
+    y: 1413.0
+  }
+  scale {
+    x: 0.6
+    y: 0.6
+  }
+  type: TYPE_BOX
+  texture: "main/crown"
+  id: "crown"
+  parent: "ingame_score_root"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: 102.0
+    y: 1337.0
+  }
+  size {
+    x: 200.0
+    y: 200.0
+  }
+  type: TYPE_BOX
+  texture: "main/empty"
+  id: "scoreboard_root"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -79.0
+    y: 57.0
+  }
+  type: TYPE_BOX
+  texture: "main/empty"
+  id: "boardscore1"
+  parent: "scoreboard_root"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  color {
+    y: 0.816
+    z: 0.392
+  }
+  type: TYPE_TEXT
+  font: "mouldycheese_4"
+  id: "boardscore_text1"
+  pivot: PIVOT_W
+  outline {
+    x: 0.859
+    y: 0.361
+    z: 0.431
+  }
+  parent: "boardscore1"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -79.0
+    y: 15.0
+  }
+  type: TYPE_BOX
+  texture: "main/empty"
+  id: "boardscore2"
+  parent: "scoreboard_root"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  color {
+    x: 0.902
+    y: 0.902
+    z: 0.902
+  }
+  type: TYPE_TEXT
+  font: "mouldycheese_4"
+  id: "boardscore_text2"
+  pivot: PIVOT_W
+  outline {
+    x: 0.2
+    y: 0.2
+    z: 0.2
+  }
+  parent: "boardscore2"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -79.0
+    y: -27.0
+  }
+  type: TYPE_BOX
+  texture: "main/empty"
+  id: "boardscore3"
+  parent: "scoreboard_root"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  color {
+    x: 0.896
+    y: 0.745
+    z: 0.593
+  }
+  type: TYPE_TEXT
+  font: "mouldycheese_4"
+  id: "boardscore_text3"
+  pivot: PIVOT_W
+  outline {
+    x: 0.2
+    y: 0.2
+    z: 0.2
+  }
+  parent: "boardscore3"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -79.0
+    y: -71.0
+  }
+  type: TYPE_BOX
+  texture: "main/empty"
+  id: "boardscore4"
+  parent: "scoreboard_root"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  font: "mouldycheese_4"
+  id: "boardscore_text4"
+  pivot: PIVOT_W
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "boardscore4"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 2679.0
+    y: 749.0
+  }
+  size {
+    x: 600.0
+    y: 747.0
+  }
+  type: TYPE_BOX
+  texture: "main/panel_template"
+  id: "login_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 70.0
+    y: 200.0
+    z: 70.0
+    w: 80.0
+  }
+}
+nodes {
+  position {
+    y: -94.0
+  }
+  size {
+    x: 450.0
+    y: 144.0
+  }
+  type: TYPE_BOX
+  texture: "main/green_button"
+  id: "login_button"
+  parent: "login_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 45.0
+    z: 40.0
+  }
+}
+nodes {
+  type: TYPE_TEXT
+  text: "Login"
+  font: "mouldycheese3"
+  id: "text"
+  parent: "login_button"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: 260.0
+  }
+  scale {
+    x: 1.1
+    y: 1.1
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "Login"
+  font: "mouldycheese"
+  id: "login_panel_text"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "login_panel"
+  inherit_alpha: true
+  shadow_alpha: 0.0
+}
+nodes {
+  position {
+    x: -190.0
+    y: 112.0
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  type: TYPE_TEXT
+  text: "e-mail"
+  font: "mouldycheese_4"
+  id: "login_panel_email"
+  pivot: PIVOT_W
+  parent: "login_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -190.0
+    y: 30.0
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  type: TYPE_TEXT
+  text: "password"
+  font: "mouldycheese_4"
+  id: "login_panel_password"
+  pivot: PIVOT_W
+  parent: "login_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -214.0
+  }
+  size {
+    x: 387.0
+    y: 50.0
+  }
+  type: TYPE_TEXT
+  text: "Register"
+  font: "mouldycheese_4"
+  id: "login_panel_register"
+  parent: "login_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -295.0
+  }
+  size {
+    x: 464.0
+    y: 50.0
+  }
+  type: TYPE_TEXT
+  text: "i need help"
+  font: "mouldycheese_4"
+  id: "help_button"
+  parent: "login_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 3324.0
+    y: 749.0
+  }
+  size {
+    x: 600.0
+    y: 850.0
+  }
+  type: TYPE_BOX
+  texture: "main/panel_template"
+  id: "register_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 70.0
+    y: 200.0
+    z: 70.0
+    w: 80.0
+  }
+}
+nodes {
+  position {
+    y: -231.0
+  }
+  size {
+    x: 450.0
+    y: 144.0
+  }
+  type: TYPE_BOX
+  texture: "main/green_button"
+  id: "register_button"
+  parent: "register_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 45.0
+    z: 40.0
+  }
+}
+nodes {
+  type: TYPE_TEXT
+  text: "Register"
+  font: "mouldycheese3"
+  id: "text1"
+  parent: "register_button"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: 310.0
+  }
+  scale {
+    x: 1.1
+    y: 1.1
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "Register"
+  font: "mouldycheese"
+  id: "register_panel_text"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "register_panel"
+  inherit_alpha: true
+  shadow_alpha: 0.0
+}
+nodes {
+  position {
+    x: -190.0
+    y: 71.0
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  type: TYPE_TEXT
+  text: "e-mail"
+  font: "mouldycheese_4"
+  id: "register_panel_email"
+  pivot: PIVOT_W
+  parent: "register_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -190.0
+    y: -13.0
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  type: TYPE_TEXT
+  text: "password"
+  font: "mouldycheese_4"
+  id: "register_panel_password_1"
+  pivot: PIVOT_W
+  parent: "register_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -190.0
+    y: -98.0
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  type: TYPE_TEXT
+  text: "password"
+  font: "mouldycheese_4"
+  id: "register_panel_password_2"
+  pivot: PIVOT_W
+  parent: "register_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -190.0
+    y: 155.0
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  type: TYPE_TEXT
+  text: "Username"
+  font: "mouldycheese_4"
+  id: "register_panel_username"
+  pivot: PIVOT_W
+  parent: "register_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -339.0
+  }
+  size {
+    x: 300.0
+    y: 55.0
+  }
+  type: TYPE_TEXT
+  text: "Login"
+  font: "mouldycheese_4"
+  id: "register_panel_login"
+  parent: "register_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 3975.0
+    y: 749.0
+  }
+  size {
+    x: 600.0
+    y: 1030.0
+  }
+  type: TYPE_BOX
+  texture: "main/panel_template"
+  id: "score_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 70.0
+    y: 200.0
+    z: 70.0
+    w: 80.0
+  }
+}
+nodes {
+  position {
+    y: 402.0
+  }
+  scale {
+    x: 1.1
+    y: 1.1
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "Score"
+  font: "mouldycheese"
+  id: "score_panel_text"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "score_panel"
+  inherit_alpha: true
+  shadow_alpha: 0.0
+}
+nodes {
+  position {
+    x: -177.0
+    y: 244.0
+  }
+  scale {
+    x: 1.2
+    y: 1.2
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  type: TYPE_TEXT
+  text: "..."
+  font: "mouldycheese_4"
+  id: "score_panel_score_"
+  pivot: PIVOT_W
+  parent: "score_panel"
+  inherit_alpha: true
+  enabled: false
+  visible: false
+}
+nodes {
+  position {
+    x: -177.0
+    y: 244.0
+  }
+  scale {
+    x: 1.2
+    y: 1.2
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  color {
+    y: 0.816
+    z: 0.392
+  }
+  type: TYPE_TEXT
+  text: "..."
+  font: "mouldycheese_4"
+  id: "score_panel_score_1"
+  pivot: PIVOT_W
+  outline {
+    x: 0.878
+    y: 0.235
+    z: 0.325
+  }
+  parent: "score_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -177.0
+    y: 174.0
+  }
+  scale {
+    x: 1.2
+    y: 1.2
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  color {
+    x: 0.902
+    y: 0.902
+    z: 0.902
+  }
+  type: TYPE_TEXT
+  text: "..."
+  font: "mouldycheese_4"
+  id: "score_panel_score_2"
+  pivot: PIVOT_W
+  outline {
+    x: 0.2
+    y: 0.2
+    z: 0.2
+  }
+  parent: "score_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -177.0
+    y: 104.0
+  }
+  scale {
+    x: 1.2
+    y: 1.2
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  color {
+    x: 0.894
+    y: 0.745
+    z: 0.592
+  }
+  type: TYPE_TEXT
+  text: "..."
+  font: "mouldycheese_4"
+  id: "score_panel_score_3"
+  pivot: PIVOT_W
+  outline {
+    x: 0.2
+    y: 0.2
+    z: 0.2
+  }
+  parent: "score_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -177.0
+    y: 34.0
+  }
+  scale {
+    x: 1.2
+    y: 1.2
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "..."
+  font: "mouldycheese_4"
+  id: "score_panel_score_4"
+  pivot: PIVOT_W
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "score_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -177.0
+    y: -36.0
+  }
+  scale {
+    x: 1.2
+    y: 1.2
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  color {
+    x: 0.988
+    y: 0.903
+    z: 0.603
+  }
+  type: TYPE_TEXT
+  text: "..."
+  font: "mouldycheese_4"
+  id: "score_panel_score_5"
+  pivot: PIVOT_W
+  outline {
+    x: 0.442
+    y: 0.272
+    z: 0.199
+  }
+  parent: "score_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -177.0
+    y: -106.0
+  }
+  scale {
+    x: 1.2
+    y: 1.2
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  color {
+    x: 0.988
+    y: 0.903
+    z: 0.603
+  }
+  type: TYPE_TEXT
+  text: "..."
+  font: "mouldycheese_4"
+  id: "score_panel_score_6"
+  pivot: PIVOT_W
+  outline {
+    x: 0.442
+    y: 0.272
+    z: 0.199
+  }
+  parent: "score_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -177.0
+    y: -177.0
+  }
+  scale {
+    x: 1.2
+    y: 1.2
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  color {
+    x: 0.988
+    y: 0.903
+    z: 0.603
+  }
+  type: TYPE_TEXT
+  text: "..."
+  font: "mouldycheese_4"
+  id: "score_panel_score_7"
+  pivot: PIVOT_W
+  outline {
+    x: 0.442
+    y: 0.272
+    z: 0.199
+  }
+  parent: "score_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -177.0
+    y: -247.0
+  }
+  scale {
+    x: 1.2
+    y: 1.2
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  color {
+    x: 0.988
+    y: 0.903
+    z: 0.603
+  }
+  type: TYPE_TEXT
+  text: "..."
+  font: "mouldycheese_4"
+  id: "score_panel_score_8"
+  pivot: PIVOT_W
+  outline {
+    x: 0.442
+    y: 0.272
+    z: 0.199
+  }
+  parent: "score_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -177.0
+    y: -317.0
+  }
+  scale {
+    x: 1.2
+    y: 1.2
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  color {
+    x: 0.988
+    y: 0.903
+    z: 0.603
+  }
+  type: TYPE_TEXT
+  text: "..."
+  font: "mouldycheese_4"
+  id: "score_panel_score_9"
+  pivot: PIVOT_W
+  outline {
+    x: 0.442
+    y: 0.272
+    z: 0.199
+  }
+  parent: "score_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -177.0
+    y: -387.0
+  }
+  scale {
+    x: 1.2
+    y: 1.2
+  }
+  size {
+    x: 400.0
+    y: 70.0
+  }
+  color {
+    x: 0.988
+    y: 0.903
+    z: 0.603
+  }
+  type: TYPE_TEXT
+  text: "..."
+  font: "mouldycheese_4"
+  id: "score_panel_score_10"
+  pivot: PIVOT_W
+  outline {
+    x: 0.442
+    y: 0.272
+    z: 0.199
+  }
+  parent: "score_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -43.0
+    y: -849.0
+  }
+  scale {
+    x: 2.212376
+    y: 0.741187
+  }
+  size {
+    x: 200.0
+    y: 100.0
+  }
+  color {
+    x: 0.502
+    y: 0.302
+    z: 0.502
+  }
+  type: TYPE_BOX
+  id: "red_line"
+  parent: "score_panel"
+  inherit_alpha: true
+  alpha: 0.35
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: 4641.0
+    y: 749.0
+  }
+  size {
+    x: 600.0
+    y: 640.0
+  }
+  type: TYPE_BOX
+  texture: "main/panel_template"
+  id: "update_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 70.0
+    y: 200.0
+    z: 70.0
+    w: 80.0
+  }
+}
+nodes {
+  position {
+    y: -175.0
+  }
+  size {
+    x: 450.0
+    y: 144.0
+  }
+  type: TYPE_BOX
+  texture: "main/green_button"
+  id: "update_button"
+  parent: "update_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 45.0
+    z: 40.0
+  }
+}
+nodes {
+  position {
+    x: 3.0
+    y: -5.0
+  }
+  size {
+    x: 200.0
+    y: 100.0
+  }
+  color {
+    x: 0.949
+    y: 0.949
+    z: 0.949
+  }
+  type: TYPE_TEXT
+  text: "Download"
+  font: "mouldycheese"
+  id: "download_text"
+  outline {
+    x: 0.302
+    y: 0.302
+    z: 0.302
+  }
+  parent: "update_button"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: 209.0
+  }
+  scale {
+    x: 1.1
+    y: 1.1
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "Update"
+  font: "mouldycheese"
+  id: "update_text"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "update_panel"
+  inherit_alpha: true
+  shadow_alpha: 0.0
+}
+nodes {
+  position {
+    y: 48.0
+  }
+  scale {
+    x: 0.8
+    y: 0.8
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "Installed:"
+  font: "mouldycheese"
+  id: "old_version"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "update_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -34.0
+  }
+  color {
+    y: 0.816
+    z: 0.392
+  }
+  type: TYPE_TEXT
+  text: "New:"
+  font: "mouldycheese"
+  id: "new_version"
+  outline {
+    x: 0.878
+    y: 0.235
+    z: 0.325
+  }
+  parent: "update_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 5288.0
+    y: 760.0
+  }
+  size {
+    x: 600.0
+    y: 500.0
+  }
+  type: TYPE_BOX
+  texture: "main/panel_template"
+  id: "tricks_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 70.0
+    y: 200.0
+    z: 70.0
+    w: 80.0
+  }
+}
+nodes {
+  position {
+    x: -143.0
+    y: -30.0
+  }
+  type: TYPE_BOX
+  texture: "main/boom_button"
+  id: "tricks_boom_button"
+  parent: "tricks_panel"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    y: -83.0
+  }
+  scale {
+    x: 1.1
+    y: 1.1
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "150"
+  font: "mouldycheese_4"
+  id: "price_boom"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "tricks_boom_button"
+  inherit_alpha: true
+  shadow_alpha: 0.0
+}
+nodes {
+  position {
+    y: 134.0
+  }
+  scale {
+    x: 1.1
+    y: 1.1
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "Tricks"
+  font: "mouldycheese"
+  id: "update_text1"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "tricks_panel"
+  inherit_alpha: true
+  shadow_alpha: 0.0
+}
+nodes {
+  position {
+    x: 110.0
+    y: 137.0
+  }
+  size {
+    x: 70.0
+    y: 70.0
+  }
+  type: TYPE_BOX
+  texture: "main/tricks_button"
+  id: "tricks_button"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 350.0
+    y: 730.0
+    z: 1.0
+  }
+  size {
+    x: 600.0
+    y: 100.0
+  }
+  color {
+    y: 0.908
+    z: 0.588
+  }
+  type: TYPE_TEXT
+  font: "mouldycheese3"
+  id: "screen_notification_text"
+  outline {
+    x: 0.537
+    y: 0.254
+    z: 0.133
+  }
+  line_break: true
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 183.0
+    y: 137.0
+  }
+  size {
+    x: 70.0
+    y: 70.0
+  }
+  type: TYPE_BOX
+  texture: "main/vs_button"
+  id: "connections_button"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 25.0
+    y: 25.0
+  }
+  size {
+    x: 30.0
+    y: 30.0
+  }
+  color {
+    x: 0.459
+    y: 0.914
+    z: 0.596
+  }
+  type: TYPE_BOX
+  id: "connections_nugget"
+  parent: "connections_button"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    y: -3.0
+  }
+  scale {
+    x: 0.7
+    y: 0.7
+  }
+  type: TYPE_TEXT
+  text: "1"
+  font: "mouldycheese_4"
+  id: "connections_number"
+  parent: "connections_nugget"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 5930.0
+    y: 760.0
+  }
+  size {
+    x: 600.0
+    y: 738.0
+  }
+  type: TYPE_BOX
+  texture: "main/panel_template"
+  id: "connections_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 70.0
+    y: 200.0
+    z: 70.0
+    w: 80.0
+  }
+}
+nodes {
+  position {
+    y: 255.0
+  }
+  scale {
+    x: 1.1
+    y: 1.1
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "Players"
+  font: "mouldycheese"
+  id: "connections_panel_text"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "connections_panel"
+  inherit_alpha: true
+  shadow_alpha: 0.0
+}
+nodes {
+  type: TYPE_BOX
+  texture: "main/empty"
+  id: "connections_root"
+  parent: "connections_panel"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    y: -73.0
+  }
+  size {
+    x: 450.0
+    y: 470.0
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_BOX
+  id: "connections_view"
+  parent: "connections_root"
+  inherit_alpha: true
+  clipping_mode: CLIPPING_MODE_STENCIL
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  size {
+    x: 450.0
+    y: 500.0
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_BOX
+  id: "connections_content"
+  parent: "connections_view"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  size {
+    x: 440.0
+    y: 98.0
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_BOX
+  id: "connections_prefab"
+  parent: "connections_content"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: -200.0
+    y: -4.0
+  }
+  type: TYPE_TEXT
+  text: "Jane"
+  font: "mouldycheese_4"
+  id: "connections_name"
+  pivot: PIVOT_W
+  parent: "connections_prefab"
+  layer: "layer1"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 137.0
+  }
+  scale {
+    x: 0.696384
+    y: 0.696384
+    z: 0.696384
+  }
+  type: TYPE_BOX
+  texture: "main/empty"
+  id: "connections_join_button"
+  parent: "connections_prefab"
+  layer: "layer1"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  scale {
+    x: 0.826178
+    y: 0.617373
+  }
+  type: TYPE_BOX
+  texture: "main/green_button"
+  id: "connections_join_button_panel"
+  parent: "connections_join_button"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  scale {
+    x: 0.8
+    y: 1.1
+  }
+  type: TYPE_TEXT
+  text: "Battle"
+  font: "mouldycheese"
+  id: "connections_join_button_text"
+  parent: "connections_join_button_panel"
+  inherit_alpha: true
+}
+nodes {
+  size {
+    x: 500.0
+    y: 80.0
+  }
+  color {
+    x: 0.988
+    y: 0.902
+    z: 0.604
+  }
+  type: TYPE_BOX
+  id: "connections_prefab_color"
+  parent: "connections_prefab"
+  layer: "layer"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: 6573.0
+    y: 760.0
+  }
+  size {
+    x: 600.0
+    y: 544.0
+  }
+  type: TYPE_BOX
+  texture: "main/panel_template"
+  id: "request_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 70.0
+    y: 200.0
+    z: 70.0
+    w: 80.0
+  }
+}
+nodes {
+  position {
+    y: 152.0
+  }
+  scale {
+    x: 1.4
+    y: 1.4
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "Battle"
+  font: "mouldycheese"
+  id: "update_text2"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "request_panel"
+  inherit_alpha: true
+  shadow_alpha: 0.0
+}
+nodes {
+  position {
+    y: 10.0
+  }
+  size {
+    x: 291.0
+    y: 68.0
+  }
+  color {
+    y: 0.816
+    z: 0.392
+  }
+  type: TYPE_TEXT
+  text: "Jane"
+  font: "mouldycheese3"
+  id: "battle_panel_name"
+  outline {
+    x: 0.877
+    y: 0.237
+    z: 0.327
+  }
+  parent: "request_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -112.0
+    y: -147.0
+  }
+  size {
+    x: 175.0
+    y: 109.0
+  }
+  color {
+    y: 0.6
+    z: 0.6
+  }
+  type: TYPE_BOX
+  texture: "main/yellow_button"
+  id: "request_reject"
+  parent: "request_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 50.0
+    y: 50.0
+    z: 50.0
+    w: 50.0
+  }
+}
+nodes {
+  size {
+    x: 200.0
+    y: 100.0
+  }
+  type: TYPE_TEXT
+  text: "Block"
+  font: "mouldycheese_4"
+  id: "text2"
+  parent: "request_reject"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -54.0
+  }
+  size {
+    x: 291.0
+    y: 68.0
+  }
+  color {
+    x: 0.902
+    y: 0.902
+    z: 0.902
+  }
+  type: TYPE_TEXT
+  text: "battle request"
+  font: "mouldycheese_4"
+  id: "battle_panel_text"
+  parent: "request_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 108.0
+    y: -147.0
+  }
+  size {
+    x: 175.0
+    y: 109.0
+  }
+  type: TYPE_BOX
+  texture: "main/green_button"
+  id: "request_accept"
+  parent: "request_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 50.0
+    y: 50.0
+    z: 50.0
+    w: 50.0
+  }
+}
+nodes {
+  size {
+    x: 200.0
+    y: 100.0
+  }
+  type: TYPE_TEXT
+  text: "Accept"
+  font: "mouldycheese_4"
+  id: "text3"
+  parent: "request_accept"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 383.0
+    y: 3686.0
+  }
+  size {
+    x: 2000.0
+    y: 3000.0
+  }
+  type: TYPE_BOX
+  id: "flash"
+  inherit_alpha: true
+}
+layers {
+  name: "layer"
+}
+layers {
+  name: "layer1"
+}
+material: "/builtins/materials/gui.material"
+adjust_reference: ADJUST_REFERENCE_PARENT

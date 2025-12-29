@@ -1,0 +1,55 @@
+local saver = require("logic.module.saver")
+local network = require("logic.module.network")
+local reg = require("logic.module.reg")
+
+local hash_write_fugitive = hash("write_fugitive")
+
+-- time is important
+local function fix_number(num)
+    -- 0 ture
+    -- 0.1 true
+    -- 0.01 false, return 0
+    -- 0.11 false, return 0.1
+    -- 0.11111111 false, return 0.1
+    local str = tostring(num)
+    local integer, decimal = str:match("^(%d+)%.?(%d*)$")
+    if decimal and #decimal > 0 then
+        decimal = decimal:sub(1, 1)
+    end
+    if decimal and #decimal > 0 then
+        return tonumber(integer .. "." .. decimal)
+    else
+        return tonumber(integer)
+    end
+end
+
+function on_message(self, message_id, message, sender)
+    if message_id == hash_write_fugitive then
+        network.write_fugitive()
+    end
+end
+
+function init(self)
+    local time_clock = os.date("%X")
+    local time_month = os.date("%m")
+    local time_year = os.date("%Y")
+    local time_day = os.date("%d")
+    local time_date = time_year .. "." .. time_month .. "." .. time_day
+    local time_date_clock = time_date .. "-" .. time_clock
+    local new_time_date_clock = string.sub(time_date_clock, 1, -7) .. "." .. string.sub(time_date_clock, -5, -4) .. "." .. string.sub(time_date_clock, -2, -1)
+
+    saver.save("last_enter", new_time_date_clock)
+
+    timer.delay(6, true, function()
+        local time = fix_number(tonumber(saver.load().minute_log)) or 0
+        time = time + 0.1
+        saver.save("minute_log", time)
+    end)
+
+    local last_time = 0
+    timer.delay(30, true, function()
+        last_time = last_time + 0.5
+        reg.set("last_time", fix_number(last_time))
+        network.timer_update()
+    end)
+end

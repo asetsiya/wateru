@@ -1,0 +1,823 @@
+script: "/logic/script/online.gui_script"
+fonts {
+  name: "mouldycheese"
+  font: "/mouldycheese_copy.font"
+}
+fonts {
+  name: "mouldycheese3"
+  font: "/mouldycheese3.font"
+}
+fonts {
+  name: "mouldycheese_4"
+  font: "/mouldycheese_4.font"
+}
+textures {
+  name: "main"
+  texture: "/main/main.atlas"
+}
+nodes {
+  position {
+    x: 350.0
+    y: 720.0
+    z: 1.0
+  }
+  size {
+    x: 600.0
+    y: 100.0
+  }
+  color {
+    y: 0.908
+    z: 0.588
+  }
+  type: TYPE_TEXT
+  font: "mouldycheese3"
+  id: "screen_notification_text"
+  outline {
+    x: 0.537
+    y: 0.254
+    z: 0.133
+  }
+  line_break: true
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 30.0
+    y: 1318.0
+  }
+  color {
+    y: 0.8
+    z: 0.4
+  }
+  type: TYPE_TEXT
+  text: "Jane"
+  font: "mouldycheese"
+  id: "name"
+  pivot: PIVOT_W
+  outline {
+    x: 0.6
+    y: 0.302
+  }
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 30.0
+    y: 616.0
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "John"
+  font: "mouldycheese"
+  id: "rival_name"
+  pivot: PIVOT_W
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 360.0
+    y: 1318.0
+  }
+  color {
+    y: 0.8
+    z: 0.4
+  }
+  type: TYPE_TEXT
+  text: "0"
+  font: "mouldycheese3"
+  id: "score"
+  outline {
+    x: 0.6
+    y: 0.302
+  }
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 360.0
+    y: 616.0
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "0"
+  font: "mouldycheese3"
+  id: "rival_score"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 1219.0
+    y: 760.0
+  }
+  size {
+    x: 600.0
+    y: 544.0
+  }
+  type: TYPE_BOX
+  texture: "main/panel_template"
+  id: "lost_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 70.0
+    y: 200.0
+    z: 70.0
+    w: 80.0
+  }
+}
+nodes {
+  position {
+    y: 163.0
+  }
+  scale {
+    x: 1.4
+    y: 1.4
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "oh..."
+  font: "mouldycheese"
+  id: "update_text"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "lost_panel"
+  inherit_alpha: true
+  shadow_alpha: 0.0
+}
+nodes {
+  position {
+    x: 7.0
+    y: -12.0
+  }
+  size {
+    x: 291.0
+    y: 68.0
+  }
+  color {
+    x: 0.816
+    y: 0.616
+    z: 0.494
+  }
+  type: TYPE_TEXT
+  text: "You lose."
+  font: "mouldycheese3"
+  id: "battle_panel_name"
+  outline {
+    x: 0.2
+    y: 0.2
+    z: 0.2
+  }
+  parent: "lost_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -135.0
+  }
+  size {
+    x: 175.0
+    y: 109.0
+  }
+  color {
+    y: 0.6
+    z: 0.6
+  }
+  type: TYPE_BOX
+  texture: "main/yellow_button"
+  id: "lost_reject"
+  parent: "lost_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 50.0
+    y: 50.0
+    z: 50.0
+    w: 50.0
+  }
+}
+nodes {
+  size {
+    x: 200.0
+    y: 100.0
+  }
+  type: TYPE_TEXT
+  text: "Back"
+  font: "mouldycheese_4"
+  id: "text"
+  parent: "lost_reject"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -56.0
+  }
+  size {
+    x: 291.0
+    y: 68.0
+  }
+  color {
+    x: 0.902
+    y: 0.902
+    z: 0.902
+  }
+  type: TYPE_TEXT
+  text: "Yeniden sava\305\237?"
+  font: "mouldycheese_4"
+  id: "battle_panel_text"
+  parent: "lost_panel"
+  inherit_alpha: true
+  enabled: false
+}
+nodes {
+  position {
+    x: 108.0
+    y: -147.0
+  }
+  size {
+    x: 175.0
+    y: 109.0
+  }
+  type: TYPE_BOX
+  texture: "main/green_button"
+  id: "lost_accept"
+  parent: "lost_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 50.0
+    y: 50.0
+    z: 50.0
+    w: 50.0
+  }
+  enabled: false
+}
+nodes {
+  size {
+    x: 200.0
+    y: 100.0
+  }
+  type: TYPE_TEXT
+  text: "Kabul et"
+  font: "mouldycheese_4"
+  id: "text1"
+  parent: "lost_accept"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 1864.0
+    y: 760.0
+  }
+  size {
+    x: 600.0
+    y: 544.0
+  }
+  type: TYPE_BOX
+  texture: "main/panel_template"
+  id: "won_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 70.0
+    y: 200.0
+    z: 70.0
+    w: 80.0
+  }
+}
+nodes {
+  position {
+    y: 163.0
+  }
+  scale {
+    x: 1.4
+    y: 1.4
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "wow"
+  font: "mouldycheese"
+  id: "update_text1"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "won_panel"
+  inherit_alpha: true
+  shadow_alpha: 0.0
+}
+nodes {
+  position {
+    y: -5.0
+  }
+  size {
+    x: 291.0
+    y: 68.0
+  }
+  color {
+    y: 0.816
+    z: 0.392
+  }
+  type: TYPE_TEXT
+  text: "You won!"
+  font: "mouldycheese3"
+  id: "battle_panel_name1"
+  outline {
+    x: 0.877
+    y: 0.237
+    z: 0.327
+  }
+  parent: "won_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -130.0
+  }
+  size {
+    x: 175.0
+    y: 109.0
+  }
+  color {
+    y: 0.6
+    z: 0.6
+  }
+  type: TYPE_BOX
+  texture: "main/yellow_button"
+  id: "won_reject"
+  parent: "won_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 50.0
+    y: 50.0
+    z: 50.0
+    w: 50.0
+  }
+}
+nodes {
+  size {
+    x: 200.0
+    y: 100.0
+  }
+  type: TYPE_TEXT
+  text: "Back"
+  font: "mouldycheese_4"
+  id: "text2"
+  parent: "won_reject"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -56.0
+  }
+  size {
+    x: 291.0
+    y: 68.0
+  }
+  color {
+    x: 0.902
+    y: 0.902
+    z: 0.902
+  }
+  type: TYPE_TEXT
+  text: "Yeniden sava\305\237?"
+  font: "mouldycheese_4"
+  id: "battle_panel_text1"
+  parent: "won_panel"
+  inherit_alpha: true
+  enabled: false
+}
+nodes {
+  position {
+    x: 108.0
+    y: -147.0
+  }
+  size {
+    x: 175.0
+    y: 109.0
+  }
+  type: TYPE_BOX
+  texture: "main/green_button"
+  id: "won_accept"
+  parent: "won_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 50.0
+    y: 50.0
+    z: 50.0
+    w: 50.0
+  }
+  enabled: false
+}
+nodes {
+  size {
+    x: 200.0
+    y: 100.0
+  }
+  type: TYPE_TEXT
+  text: "Kabul et"
+  font: "mouldycheese_4"
+  id: "text3"
+  parent: "won_accept"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 2505.0
+    y: 760.0
+  }
+  size {
+    x: 600.0
+    y: 544.0
+  }
+  type: TYPE_BOX
+  texture: "main/panel_template"
+  id: "connection_lost_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 70.0
+    y: 200.0
+    z: 70.0
+    w: 80.0
+  }
+}
+nodes {
+  position {
+    y: 163.0
+  }
+  scale {
+    x: 1.4
+    y: 1.4
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "oh..."
+  font: "mouldycheese"
+  id: "update_text2"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "connection_lost_panel"
+  inherit_alpha: true
+  shadow_alpha: 0.0
+}
+nodes {
+  position {
+    y: 10.0
+  }
+  size {
+    x: 291.0
+    y: 68.0
+  }
+  color {
+    x: 0.966
+    y: 0.11
+    z: 0.11
+  }
+  type: TYPE_TEXT
+  text: "Connection lost"
+  font: "mouldycheese3"
+  id: "battle_panel_name2"
+  outline {
+    x: 0.102
+    y: 0.102
+    z: 0.102
+  }
+  parent: "connection_lost_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: -136.0
+    y: 27.0
+  }
+  color {
+    x: 0.965
+    y: 0.11
+    z: 0.11
+  }
+  type: TYPE_TEXT
+  text: "\n"
+  ""
+  font: "mouldycheese3"
+  id: "text4"
+  outline {
+    x: 0.102
+    y: 0.102
+    z: 0.102
+  }
+  parent: "battle_panel_name2"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -61.0
+  }
+  size {
+    x: 291.0
+    y: 68.0
+  }
+  color {
+    x: 0.902
+    y: 0.902
+    z: 0.902
+  }
+  type: TYPE_TEXT
+  text: "idk what happened"
+  font: "mouldycheese_4"
+  id: "battle_panel_text2"
+  parent: "connection_lost_panel"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    y: -149.0
+  }
+  size {
+    x: 212.0
+    y: 109.0
+  }
+  type: TYPE_BOX
+  texture: "main/green_button"
+  id: "connection_lost_ok"
+  parent: "connection_lost_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 50.0
+    y: 50.0
+    z: 50.0
+    w: 50.0
+  }
+}
+nodes {
+  size {
+    x: 200.0
+    y: 100.0
+  }
+  type: TYPE_TEXT
+  text: "Ok"
+  font: "mouldycheese_4"
+  id: "text5"
+  parent: "connection_lost_ok"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 3156.0
+    y: 760.0
+  }
+  size {
+    x: 600.0
+    y: 738.0
+  }
+  type: TYPE_BOX
+  texture: "main/panel_template"
+  id: "mods_panel"
+  inherit_alpha: true
+  slice9 {
+    x: 70.0
+    y: 200.0
+    z: 70.0
+    w: 80.0
+  }
+}
+nodes {
+  position {
+    y: 255.0
+  }
+  scale {
+    x: 1.1
+    y: 1.1
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_TEXT
+  text: "Mode"
+  font: "mouldycheese"
+  id: "mods_panel_text"
+  outline {
+    x: 0.549
+    y: 0.373
+    z: 0.298
+  }
+  parent: "mods_panel"
+  inherit_alpha: true
+  shadow_alpha: 0.0
+}
+nodes {
+  type: TYPE_BOX
+  texture: "main/empty"
+  id: "mods_root"
+  parent: "mods_panel"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    y: -73.0
+  }
+  size {
+    x: 450.0
+    y: 470.0
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_BOX
+  id: "mods_view"
+  parent: "mods_root"
+  inherit_alpha: true
+  clipping_mode: CLIPPING_MODE_STENCIL
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  size {
+    x: 450.0
+    y: 500.0
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_BOX
+  id: "mods_content"
+  parent: "mods_view"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  size {
+    x: 440.0
+    y: 124.0
+  }
+  color {
+    x: 0.992
+    y: 0.957
+    z: 0.835
+  }
+  type: TYPE_BOX
+  id: "mods_prefab"
+  parent: "mods_content"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: -200.0
+    y: 8.0
+  }
+  type: TYPE_TEXT
+  text: "1000 point"
+  font: "mouldycheese_4"
+  id: "mods_name"
+  pivot: PIVOT_W
+  parent: "mods_prefab"
+  layer: "layer1"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 137.0
+  }
+  scale {
+    x: 0.696384
+    y: 0.696384
+    z: 0.696384
+  }
+  type: TYPE_BOX
+  texture: "main/empty"
+  id: "mods_choose_button"
+  parent: "mods_prefab"
+  layer: "layer1"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: 22.975828
+  }
+  size {
+    x: 169.0
+    y: 125.0
+  }
+  type: TYPE_BOX
+  texture: "main/green_button"
+  id: "mods_choose_button_panel"
+  parent: "mods_choose_button"
+  inherit_alpha: true
+  slice9 {
+    x: 50.0
+    y: 50.0
+    z: 50.0
+    w: 50.0
+  }
+}
+nodes {
+  type: TYPE_TEXT
+  text: "Choose"
+  font: "mouldycheese"
+  id: "mods_choose_button_text"
+  parent: "mods_choose_button_panel"
+  inherit_alpha: true
+}
+nodes {
+  size {
+    x: 500.0
+    y: 105.0
+  }
+  color {
+    x: 0.988
+    y: 0.902
+    z: 0.604
+  }
+  type: TYPE_BOX
+  id: "mods_prefab_color"
+  parent: "mods_prefab"
+  layer: "layer"
+  inherit_alpha: true
+  size_mode: SIZE_MODE_AUTO
+}
+nodes {
+  position {
+    x: -200.0
+    y: -29.0
+  }
+  scale {
+    x: 0.5
+    y: 0.5
+  }
+  type: TYPE_TEXT
+  text: "The first to reach 1000 points wins."
+  font: "mouldycheese_4"
+  id: "mods_description"
+  pivot: PIVOT_W
+  parent: "mods_prefab"
+  layer: "layer1"
+  inherit_alpha: true
+}
+nodes {
+  position {
+    x: 30.0
+    y: 1384.0
+  }
+  color {
+    x: 0.902
+    y: 0.702
+    z: 0.902
+  }
+  type: TYPE_TEXT
+  text: "Mode: "
+  font: "mouldycheese_4"
+  id: "online_mode_text"
+  pivot: PIVOT_W
+  outline {
+    x: 0.2
+    z: 0.2
+  }
+  inherit_alpha: true
+}
+layers {
+  name: "layer"
+}
+layers {
+  name: "layer1"
+}
+material: "/builtins/materials/gui.material"
+adjust_reference: ADJUST_REFERENCE_PARENT
